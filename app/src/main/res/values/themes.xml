@@ -5,5 +5,14 @@
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
 
-    <style name="Theme.Niyyah" parent="Base.Theme.Niyyah" />
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <!-- 1. Warna Background (Ungu) -->
+        <item name="windowSplashScreenBackground">@drawable/primary_background</item>
+
+        <!-- 2. Gambar Logo (Putih) -->
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_niyyah_white</item>
+
+        <!-- 3. Tema tujuan setelah splash selesai (Kembali ke Tema Utama) -->
+        <item name="postSplashScreenTheme">@style/Base.Theme.Niyyah</item>
+    </style>
 </resources>

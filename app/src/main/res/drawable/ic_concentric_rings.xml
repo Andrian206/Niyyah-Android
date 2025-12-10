@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Lingkaran Luar (Ungu) -->
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="@color/purpleD" />
+        </shape>
+    </item>
+
+    <!-- Lubang Tengah (Transparan/Adaptif) -->
+    <item
+        android:left="40dp"
+        android:right="40dp"
+        android:top="40dp"
+        android:bottom="40dp">
+        <shape android:shape="oval">
+            <solid android:color="?android:attr/colorBackground" />
+        </shape>
+    </item>
+
+</layer-list>
