@@ -1,4 +1,4 @@
-package com.pab.niyyah
+package com.pab.niyyah.data
 
 data class User(
     val idUser: Int = 0,
@@ -6,6 +6,7 @@ data class User(
     val lastName: String = "",
     val email: String = "",
     val password: String = "",
-    val confirmPassword: String = "",
+    val gender: String = "",
+    val nationality: String = "",
     val photoUrl: String = ""
 )

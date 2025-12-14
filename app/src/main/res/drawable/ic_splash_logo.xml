@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- File: res/drawable/ic_splash_logo.xml -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="@color/purpleD" />
+        </shape>
+    </item>
+
+    <item
+        android:drawable="@drawable/ic_niyyah_white"
+        android:left="28dp"
+        android:right="28dp"
+        android:top="28dp"
+        android:bottom="28dp" />
+</layer-list>
+    

@@ -1,4 +1,4 @@
-package com.pab.niyyah
+package com.pab.niyyah.data
 
 data class Task(
     val id: String = "",

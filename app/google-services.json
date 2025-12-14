@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "626682773398",
+    "project_id": "niyyah-android",
+    "storage_bucket": "niyyah-android.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:626682773398:android:94a607a93fb69efc88e7b7",
+        "android_client_info": {
+          "package_name": "com.pab.niyyah"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD3-xN4IgwJZdT_aOB6NGBxFdLLB3nz6zc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
