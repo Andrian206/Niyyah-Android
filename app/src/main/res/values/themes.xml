@@ -11,4 +11,10 @@
         <item name="postSplashScreenTheme">@style/Base.Theme.Niyyah</item>
     </style>
 
+    <style name="buttonA" parent="Widget.MaterialComponents.Button">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:background">@drawable/bg_button_purple</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
 </resources>

@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Niyyah</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hello">Hello!</string>
+    <string name="greeting">Let's build momentum today!\none small win at a time.</string>
+    <string name="getstarted">Get Started!</string>
 </resources>
