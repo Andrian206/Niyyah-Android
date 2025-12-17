@@ -8,6 +8,7 @@
     android:background="@color/purpleD"
     android:padding="0dp">
 
+    <!-- Logo tetap di tengah vertikal area ungu -->
     <ImageView
         android:id="@+id/iv_logo"
         android:layout_width="150dp"
@@ -16,56 +17,98 @@
         app:layout_constraintBottom_toTopOf="@+id/container_bottom"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintVertical_chainStyle="packed" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- Area Putih Bawah -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/container_bottom"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="@drawable/bg_white_rounded_top"
+        android:paddingHorizontal="32dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent="0.42"
+        app:layout_constraintHeight_percent="0.45"
         app:layout_constraintStart_toStartOf="parent">
 
+        <!-- TITLE: Hello! -->
+        <!-- Dihapus constraintEnd agar rata kiri -->
         <TextView
             android:id="@+id/tv_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:text="@string/hello"
-            android:textColor="@color/black"
-            android:textSize="48sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="16dp"
+            android:text="Hello!"
+            android:textColor="@color/purpleD"
+            android:textSize="52sp"
+            android:fontFamily="@font/inter_family"
+            android:textFontWeight="800"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <!-- SUBTITLE -->
+        <!-- Dihapus constraintEnd agar rata kiri -->
         <TextView
             android:id="@+id/tv_subtitle"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
+            android:layout_marginTop="8dp"
             android:text="@string/greeting"
             android:textColor="@color/purpleA"
-            android:textSize="20sp"
+            android:textSize="23sp"
+            android:fontFamily="@font/inter_family"
+            android:textFontWeight="700"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_title" />
 
         <Button
             android:id="@+id/btn_get_started"
+            style="@style/buttonA"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="24dp"
-            android:padding="16dp"
+            android:layout_marginBottom="24dp"
             android:text="@string/getstarted"
-            android:textColor="@color/white"
+            app:layout_constraintBottom_toTopOf="@+id/layout_footer"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/layout_footer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            style="@style/buttonA" />
+            app:layout_constraintStart_toStartOf="parent">
+
+            <View
+                android:layout_width="13dp"
+                android:layout_height="13dp"
+                android:layout_marginEnd="4dp"
+                android:background="@drawable/ic_ring" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/powered_by"
+                android:textSize="12sp"
+                android:textColor="@color/greyD"
+                android:fontFamily="@font/inter_family"
+                android:textFontWeight="400"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/app_name"
+                android:textSize="12sp"
+                android:textColor="@color/purpleD"
+                android:fontFamily="@font/inter_family"
+                android:textFontWeight="700"/>
+
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
