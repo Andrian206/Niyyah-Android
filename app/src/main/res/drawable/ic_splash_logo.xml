@@ -3,12 +3,12 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
         <shape android:shape="oval">
-            <solid android:color="@color/purpleD" />
+            <solid android:color="@color/white" />
         </shape>
     </item>
 
     <item
-        android:drawable="@drawable/ic_niyyah_white"
+        android:drawable="@drawable/ic_niyyah_purple"
         android:left="28dp"
         android:right="28dp"
         android:top="28dp"
