@@ -10,3 +10,4 @@ Gtau mau list apa intinya pake ini:
 1. Firebase
 2. Splashscreen 
 3. Rencana pake API??
+4. Revisi Desain lagi lo ya
