@@ -3,6 +3,7 @@ package com.pab.niyyah.ui.main
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.content.Intent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -10,6 +11,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.firebase.auth.FirebaseAuth
 import com.pab.niyyah.R
+import com.pab.niyyah.ui.auth.AuthActivity
 
 class MainActivity : AppCompatActivity() {
 
@@ -27,8 +29,7 @@ class MainActivity : AppCompatActivity() {
             if (currentUser == null) {
                 val intent = Intent(this, AuthActivity::class.java)
                 startActivity(intent)
-                
-                // Tutup MainActivity biar pas di-back gak balik ke Splash
+
                 finish()
             } else {
                  isReady = true

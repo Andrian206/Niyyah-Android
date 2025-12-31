@@ -5,4 +5,13 @@
     <string name="getstarted">Get Started!</string>
     <string name="powered_by">"Powered by "</string>
     <string name="create_an_account">"Create an account or sign in to make your day"</string>
+    <string name="sign_in">"Sign In"</string>
+    <string name="sign_up">"Sign Up"</string>
+    <string name="log_out">"Log Out"</string>
+    <string name="forgot_password">"Forgot Password?"</string>
+    <string name="sign_in_to_your_account">"Sign in to your Account"</string>
+    <string name="save">"Save"</string>
+    <string name="edit">"Edit"</string>
+    <string name="email">"Email"</string>
+    <string name="password">"Password"</string>
 </resources>
