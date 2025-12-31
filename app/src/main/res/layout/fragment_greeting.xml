@@ -5,21 +5,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/purpleD"
+    android:background="@color/white"
     android:padding="0dp">
 
-    <!-- Logo tetap di tengah vertikal area ungu -->
     <ImageView
         android:id="@+id/iv_logo"
         android:layout_width="150dp"
         android:layout_height="150dp"
-        android:src="@drawable/ic_niyyah_white"
+        android:src="@drawable/ic_niyyah_purple"
         app:layout_constraintBottom_toTopOf="@+id/container_bottom"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Area Putih Bawah -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/container_bottom"
         android:layout_width="match_parent"
@@ -28,17 +26,15 @@
         android:paddingHorizontal="32dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent="0.45"
+        app:layout_constraintHeight_percent="0.42"
         app:layout_constraintStart_toStartOf="parent">
 
-        <!-- TITLE: Hello! -->
-        <!-- Dihapus constraintEnd agar rata kiri -->
         <TextView
             android:id="@+id/tv_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Hello!"
+            android:text="@string/hello"
             android:textColor="@color/purpleD"
             android:textSize="52sp"
             android:fontFamily="@font/inter_family"
@@ -46,13 +42,11 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- SUBTITLE -->
-        <!-- Dihapus constraintEnd agar rata kiri -->
         <TextView
             android:id="@+id/tv_subtitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="0dp"
             android:text="@string/greeting"
             android:textColor="@color/purpleA"
             android:textSize="23sp"
@@ -95,7 +89,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/powered_by"
                 android:textSize="12sp"
-                android:textColor="@color/greyD"
+                android:textColor="@color/greyMD"
                 android:fontFamily="@font/inter_family"
                 android:textFontWeight="400"/>
 

@@ -16,15 +16,27 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
-        var isReady = false
-
-        splashScreen.setKeepOnScreenCondition { !isReady }
-        Handler(Looper.getMainLooper()).postDelayed({
-            isReady = true
-        }, 1000)
-
         val auth = FirebaseAuth.getInstance()
         println("FIREBASE CHECK: Aplikasi berhasil terhubung! User saat ini: ${auth.currentUser}")
+
+        var isReady = false
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            val currentUser = auth.currentUser
+
+            if (currentUser == null) {
+                val intent = Intent(this, AuthActivity::class.java)
+                startActivity(intent)
+                
+                // Tutup MainActivity biar pas di-back gak balik ke Splash
+                finish()
+            } else {
+                 isReady = true
+            }
+           
+        }, 1000)
+
+        splashScreen.setKeepOnScreenCondition { !isReady }
 
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
