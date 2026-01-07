@@ -45,4 +45,9 @@
     <string name="due_date">"Due Date"</string>
     <string name="time">"Time"</string>
     <string name="repeat">"Repeat"</string>
+
+    <!-- Profile -->
+    <string name="profile">"Profile"</string>
+    <string name="name">"Name"</string>
+    <string name="username_format">"@%1$s"</string>
 </resources>
