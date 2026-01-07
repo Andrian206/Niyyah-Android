@@ -28,4 +28,9 @@
         <item name="elevation">0dp</item>
     </style>
 
+    <style name="ShapeAppearance.Fab.Rounded" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
+    </style>
+
 </resources>

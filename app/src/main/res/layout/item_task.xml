@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp">
+
+    <!-- Checkbox Circle -->
+    <ImageView
+        android:id="@+id/iv_checkbox"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/ic_checkbox_unchecked"
+        android:contentDescription="@string/my_task"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <!-- Task Content -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:orientation="vertical"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/iv_checkbox"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <!-- Task Title -->
+        <TextView
+            android:id="@+id/tv_task_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:fontFamily="@font/inter_semibold"
+            android:maxLines="1"
+            android:ellipsize="end"
+            tools:text="Berangkat Kuliah" />
+
+        <!-- Task Description (optional) -->
+        <TextView
+            android:id="@+id/tv_task_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textColor="@color/greyMD"
+            android:textSize="12sp"
+            android:fontFamily="@font/inter_regular"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:visibility="gone"
+            tools:text="Miawmiawmiawmiaw miawmiaw"
+            tools:visibility="visible" />
+
+        <!-- Task Time -->
+        <TextView
+            android:id="@+id/tv_task_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textColor="@color/greyMD"
+            android:textSize="11sp"
+            android:fontFamily="@font/inter_regular"
+            tools:text="Today, 7:00 A.M" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

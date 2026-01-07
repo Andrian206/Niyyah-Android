@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Niyyah</string>
     <string name="hello">Hello!</string>
+    <string name="hello_user">Hello, %1$s!</string>
     <string name="greeting">"Let's build momentum today!\ one small win at a time."</string>
     <string name="getstarted">Get Started!</string>
     <string name="get_started_now">Get Started now</string>
@@ -28,4 +29,20 @@
     <string name="edit_profile">"Edit Profile"</string>
     <string name="dont_have_account">"Don\'t have an account? "</string>
     <string name="already_have_account">"Already have an account? "</string>
+
+    <!-- Home -->
+    <string name="my_task">"My Task"</string>
+    <string name="progress_percent">%1$d%%</string>
+    <string name="today">Today</string>
+
+    <!-- Task -->
+    <string name="new_task">"New Task"</string>
+    <string name="edit_task">"Edit Task"</string>
+    <string name="create">"Create"</string>
+    <string name="delete">"Delete"</string>
+    <string name="title">"Title"</string>
+    <string name="details">"Details"</string>
+    <string name="due_date">"Due Date"</string>
+    <string name="time">"Time"</string>
+    <string name="repeat">"Repeat"</string>
 </resources>
