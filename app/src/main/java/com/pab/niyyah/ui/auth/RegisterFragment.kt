@@ -1,60 +1,115 @@
 package com.pab.niyyah.ui.auth
 
+import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.pab.niyyah.R
+import com.pab.niyyah.databinding.FragmentRegisterBinding
+import com.pab.niyyah.ui.main.MainActivity
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [RegisterFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class RegisterFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+    // Setup ViewBinding
+    private var _binding: FragmentRegisterBinding? = null
+    private val binding get() = _binding!!
+
+    // Setup Firebase
+    private lateinit var auth: FirebaseAuth
+    private lateinit var db: FirebaseFirestore
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = FragmentRegisterBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        // Inisialisasi Firebase
+        auth = FirebaseAuth.getInstance()
+        db = FirebaseFirestore.getInstance()
+
+        // 1. Aksi Tombol Login (Pindah ke Login jika sudah punya akun)
+        binding.tvSignIn.setOnClickListener {
+            findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
+        }
+
+        // 2. Aksi Tombol Register
+        binding.btnSignUp.setOnClickListener {
+            val firstName = binding.etFirstName.text.toString().trim()
+            val lastName = binding.etLastName.text.toString().trim()
+            val email = binding.etEmail.text.toString().trim()
+            val password = binding.etPassword.text.toString().trim()
+            val confirmPassword = binding.etConfirmPassword.text.toString().trim()
+
+            // Validasi Input Kosong
+            if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty()) {
+                Toast.makeText(context, "Semua kolom harus diisi!", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            // Validasi Password Match
+            if (password != confirmPassword) {
+                Toast.makeText(context, "Password tidak cocok!", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            // Mulai Proses Register Firebase
+            registerUser(firstName, lastName, email, password)
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_register, container, false)
-    }
-
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment RegisterFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            RegisterFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    private fun registerUser(firstName: String, lastName: String, email: String, pass: String) {
+        auth.createUserWithEmailAndPassword(email, pass)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    // Sukses Login Auth, sekarang simpan data ke Firestore
+                    val userId = auth.currentUser?.uid
+                    if (userId != null) {
+                        saveUserToFirestore(userId, firstName, lastName, email)
+                    }
+                } else {
+                    Toast.makeText(context, "Register Gagal: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
                 }
             }
+    }
+
+    private fun saveUserToFirestore(userId: String, firstName: String, lastName: String, email: String) {
+        // Buat map data user
+        val userData = hashMapOf(
+            "firstName" to firstName,
+            "lastName" to lastName,
+            "email" to email,
+            "username" to "",
+            "photoUrl" to "",
+            "gender" to "",
+            "nationality" to ""
+        )
+
+        db.collection("users").document(userId).set(userData)
+            .addOnSuccessListener {
+                Toast.makeText(context, "Akun berhasil dibuat!", Toast.LENGTH_SHORT).show()
+
+                // Pindah ke MainActivity (Home)
+                val intent = Intent(requireActivity(), MainActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+            }
+            .addOnFailureListener {
+                Toast.makeText(context, "Gagal simpan data user: ${it.message}", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
