@@ -125,30 +125,81 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/fab_add_task">
 
-        <LinearLayout
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="20dp">
+            android:fillViewport="true">
 
-            <TextView
-                android:id="@+id/tv_my_task"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/my_task"
-                android:textColor="@color/purpleD"
-                android:textSize="18sp"
-                android:fontFamily="@font/inter_bold" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_tasks"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="12dp"
-                android:clipToPadding="false"
-                tools:listitem="@layout/item_task" />
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
 
-        </LinearLayout>
+                <!-- Ongoing Tasks Section -->
+                <TextView
+                    android:id="@+id/tv_ongoing_task"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ongoing_task"
+                    android:textColor="@color/purpleD"
+                    android:textSize="16sp"
+                    android:fontFamily="@font/inter_bold" />
+
+                <TextView
+                    android:id="@+id/tv_no_ongoing_task"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="@string/no_ongoing_task"
+                    android:textColor="@color/greyMD"
+                    android:textSize="12sp"
+                    android:fontFamily="@font/inter_regular"
+                    android:visibility="gone" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_ongoing_tasks"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:nestedScrollingEnabled="false"
+                    android:clipToPadding="false"
+                    tools:listitem="@layout/item_task" />
+
+                <!-- Completed Tasks Section -->
+                <TextView
+                    android:id="@+id/tv_completed_task"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="@string/completed_task"
+                    android:textColor="@color/greenSuccess"
+                    android:textSize="16sp"
+                    android:fontFamily="@font/inter_bold" />
+
+                <TextView
+                    android:id="@+id/tv_no_completed_task"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="@string/no_completed_task"
+                    android:textColor="@color/greyMD"
+                    android:textSize="12sp"
+                    android:fontFamily="@font/inter_regular"
+                    android:visibility="gone" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_completed_tasks"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:nestedScrollingEnabled="false"
+                    android:clipToPadding="false"
+                    tools:listitem="@layout/item_task" />
+
+            </LinearLayout>
+
+        </ScrollView>
 
     </androidx.cardview.widget.CardView>
 

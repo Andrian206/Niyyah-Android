@@ -22,7 +22,8 @@ class HomeFragment : Fragment() {
 
     private lateinit var auth: FirebaseAuth
     private lateinit var db: FirebaseFirestore
-    private lateinit var taskAdapter: TaskAdapter
+    private lateinit var ongoingTaskAdapter: TaskAdapter
+    private lateinit var completedTaskAdapter: TaskAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -56,22 +57,36 @@ class HomeFragment : Fragment() {
                 }
             }
 
-        // Setup RecyclerView & Adapter
-        taskAdapter = TaskAdapter(
+        // Setup Ongoing Tasks Adapter
+        ongoingTaskAdapter = TaskAdapter(
             onTaskClick = { task ->
-                // Navigasi ke EditTaskFragment dengan taskId
                 val bundle = bundleOf("taskId" to task.id)
                 findNavController().navigate(R.id.action_homeFragment_to_editTaskFragment, bundle)
             },
             onCheckboxClick = { task ->
-                // Toggle status isCompleted
                 toggleTaskCompleted(task)
             }
         )
 
-        binding.rvTasks.apply {
+        // Setup Completed Tasks Adapter
+        completedTaskAdapter = TaskAdapter(
+            onTaskClick = { task ->
+                val bundle = bundleOf("taskId" to task.id)
+                findNavController().navigate(R.id.action_homeFragment_to_editTaskFragment, bundle)
+            },
+            onCheckboxClick = { task ->
+                toggleTaskCompleted(task)
+            }
+        )
+
+        binding.rvOngoingTasks.apply {
             layoutManager = LinearLayoutManager(context)
-            adapter = taskAdapter
+            adapter = ongoingTaskAdapter
+        }
+
+        binding.rvCompletedTasks.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = completedTaskAdapter
         }
 
         // Set progress awal
@@ -91,7 +106,6 @@ class HomeFragment : Fragment() {
     }
 
     private fun loadTasksFromFirebase(userId: String) {
-        // Query: Ambil tasks dimana userId sama dengan user yang login
         db.collection("tasks")
             .whereEqualTo("userId", userId)
             .addSnapshotListener { snapshots, e ->
@@ -100,20 +114,31 @@ class HomeFragment : Fragment() {
                     return@addSnapshotListener
                 }
 
-                val taskList = ArrayList<Task>()
+                val allTasks = ArrayList<Task>()
 
                 for (document in snapshots!!) {
                     val task = document.toObject(Task::class.java)
-                    // Masukkan ID dokumen ke object task
                     val taskWithId = task.copy(id = document.id)
-                    taskList.add(taskWithId)
+                    allTasks.add(taskWithId)
                 }
 
-                // Urutkan berdasarkan createdAt (terbaru di atas)
-                taskList.sortByDescending { it.createdAt }
+                // Pisahkan ongoing dan completed tasks
+                val ongoingTasks = allTasks.filter { !it.isCompleted }.sortedByDescending { it.createdAt }
+                val completedTasks = allTasks.filter { it.isCompleted }.sortedByDescending { it.createdAt }
 
-                taskAdapter.submitList(taskList)
-                updateProgress(taskList)
+                // Update adapters
+                ongoingTaskAdapter.submitList(ongoingTasks)
+                completedTaskAdapter.submitList(completedTasks)
+
+                // Show/hide empty state
+                binding.tvNoOngoingTask.visibility = if (ongoingTasks.isEmpty()) View.VISIBLE else View.GONE
+                binding.rvOngoingTasks.visibility = if (ongoingTasks.isEmpty()) View.GONE else View.VISIBLE
+
+                binding.tvNoCompletedTask.visibility = if (completedTasks.isEmpty()) View.VISIBLE else View.GONE
+                binding.rvCompletedTasks.visibility = if (completedTasks.isEmpty()) View.GONE else View.VISIBLE
+
+                // Update progress
+                updateProgress(allTasks)
             }
     }
 

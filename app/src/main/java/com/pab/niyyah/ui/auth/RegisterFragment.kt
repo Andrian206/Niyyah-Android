@@ -2,6 +2,8 @@ package com.pab.niyyah.ui.auth
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.method.HideReturnsTransformationMethod
+import android.text.method.PasswordTransformationMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,6 +25,9 @@ class RegisterFragment : Fragment() {
     // Setup Firebase
     private lateinit var auth: FirebaseAuth
     private lateinit var db: FirebaseFirestore
+    
+    private var isPasswordVisible = false
+    private var isConfirmPasswordVisible = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -37,6 +42,39 @@ class RegisterFragment : Fragment() {
         auth = FirebaseAuth.getInstance()
         db = FirebaseFirestore.getInstance()
 
+        setupPasswordToggles()
+        setupClickListeners()
+    }
+    
+    private fun setupPasswordToggles() {
+        // Password toggle
+        binding.ivPasswordToggle.setOnClickListener {
+            isPasswordVisible = !isPasswordVisible
+            if (isPasswordVisible) {
+                binding.etPassword.transformationMethod = HideReturnsTransformationMethod.getInstance()
+                binding.ivPasswordToggle.setImageResource(R.drawable.ic_visibility)
+            } else {
+                binding.etPassword.transformationMethod = PasswordTransformationMethod.getInstance()
+                binding.ivPasswordToggle.setImageResource(R.drawable.ic_visibility_off)
+            }
+            binding.etPassword.setSelection(binding.etPassword.text?.length ?: 0)
+        }
+        
+        // Confirm Password toggle
+        binding.ivConfirmPasswordToggle.setOnClickListener {
+            isConfirmPasswordVisible = !isConfirmPasswordVisible
+            if (isConfirmPasswordVisible) {
+                binding.etConfirmPassword.transformationMethod = HideReturnsTransformationMethod.getInstance()
+                binding.ivConfirmPasswordToggle.setImageResource(R.drawable.ic_visibility)
+            } else {
+                binding.etConfirmPassword.transformationMethod = PasswordTransformationMethod.getInstance()
+                binding.ivConfirmPasswordToggle.setImageResource(R.drawable.ic_visibility_off)
+            }
+            binding.etConfirmPassword.setSelection(binding.etConfirmPassword.text?.length ?: 0)
+        }
+    }
+    
+    private fun setupClickListeners() {
         // 1. Aksi Tombol Login (Pindah ke Login jika sudah punya akun)
         binding.tvSignIn.setOnClickListener {
             findNavController().navigate(R.id.action_registerFragment_to_loginFragment)

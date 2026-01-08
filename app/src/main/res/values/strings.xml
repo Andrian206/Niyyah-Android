@@ -32,6 +32,10 @@
 
     <!-- Home -->
     <string name="my_task">"My Task"</string>
+    <string name="ongoing_task">"Ongoing Tasks"</string>
+    <string name="completed_task">"Completed Tasks"</string>
+    <string name="no_ongoing_task">"No ongoing tasks. Add a new task!"</string>
+    <string name="no_completed_task">"No completed tasks yet."</string>
     <string name="progress_percent">%1$d%%</string>
     <string name="today">Today</string>
 

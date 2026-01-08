@@ -19,7 +19,6 @@ class MainActivity : AppCompatActivity() {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
         val auth = FirebaseAuth.getInstance()
-        println("FIREBASE CHECK: Aplikasi berhasil terhubung! User saat ini: ${auth.currentUser}")
         var isReady = false
         Handler(Looper.getMainLooper()).postDelayed({
             val currentUser = auth.currentUser

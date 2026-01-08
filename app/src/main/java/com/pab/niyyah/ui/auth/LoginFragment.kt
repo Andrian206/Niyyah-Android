@@ -2,6 +2,8 @@ package com.pab.niyyah.ui.auth
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.method.HideReturnsTransformationMethod
+import android.text.method.PasswordTransformationMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +20,8 @@ class LoginFragment : Fragment() {
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
     private lateinit var auth: FirebaseAuth
+    
+    private var isPasswordVisible = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,6 +36,28 @@ class LoginFragment : Fragment() {
 
         auth = FirebaseAuth.getInstance()
 
+        setupPasswordToggle()
+        setupClickListeners()
+    }
+    
+    private fun setupPasswordToggle() {
+        binding.ivPasswordToggle.setOnClickListener {
+            isPasswordVisible = !isPasswordVisible
+            if (isPasswordVisible) {
+                // Show password
+                binding.etPassword.transformationMethod = HideReturnsTransformationMethod.getInstance()
+                binding.ivPasswordToggle.setImageResource(R.drawable.ic_visibility)
+            } else {
+                // Hide password
+                binding.etPassword.transformationMethod = PasswordTransformationMethod.getInstance()
+                binding.ivPasswordToggle.setImageResource(R.drawable.ic_visibility_off)
+            }
+            // Move cursor to end
+            binding.etPassword.setSelection(binding.etPassword.text?.length ?: 0)
+        }
+    }
+    
+    private fun setupClickListeners() {
         // 1. Tombol pindah ke Register
         binding.tvSignUp.setOnClickListener {
             findNavController().navigate(R.id.action_loginFragment_to_registerFragment)

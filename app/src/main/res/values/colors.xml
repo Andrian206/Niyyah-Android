@@ -9,4 +9,5 @@
     <color name="greyL">#FFDBDBDB</color>
     <color name="greyMD">#FFA29DA4</color>
     <color name="red">#FFCF2629</color>
+    <color name="greenSuccess">#FF4CAF50</color>
 </resources>

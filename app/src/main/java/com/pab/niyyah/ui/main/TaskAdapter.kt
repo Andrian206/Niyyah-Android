@@ -3,6 +3,7 @@ package com.pab.niyyah.ui.main
 import android.graphics.Paint
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.pab.niyyah.R
 import com.pab.niyyah.data.Task
@@ -34,13 +35,31 @@ class TaskAdapter(
                 binding.tvTaskDescription.visibility = android.view.View.GONE
             }
 
-            // Update checkbox icon berdasarkan status
+            // Update tampilan berdasarkan status completed
             if (task.isCompleted) {
+                // Checkbox checked
                 binding.ivCheckbox.setImageResource(R.drawable.ic_checkbox_checked)
+                
+                // Strikethrough dan warna abu-abu untuk task selesai
                 binding.tvTaskTitle.paintFlags = binding.tvTaskTitle.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+                binding.tvTaskTitle.setTextColor(ContextCompat.getColor(binding.root.context, R.color.greyMD))
+                binding.tvTaskTime.setTextColor(ContextCompat.getColor(binding.root.context, R.color.greyL))
+                binding.tvTaskDescription.setTextColor(ContextCompat.getColor(binding.root.context, R.color.greyL))
+                
+                // Opacity lebih rendah
+                binding.root.alpha = 0.7f
             } else {
+                // Checkbox unchecked
                 binding.ivCheckbox.setImageResource(R.drawable.ic_checkbox_unchecked)
+                
+                // Normal styling untuk task ongoing
                 binding.tvTaskTitle.paintFlags = binding.tvTaskTitle.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
+                binding.tvTaskTitle.setTextColor(ContextCompat.getColor(binding.root.context, R.color.black))
+                binding.tvTaskTime.setTextColor(ContextCompat.getColor(binding.root.context, R.color.greyMD))
+                binding.tvTaskDescription.setTextColor(ContextCompat.getColor(binding.root.context, R.color.greyMD))
+                
+                // Opacity normal
+                binding.root.alpha = 1.0f
             }
 
             // Klik item -> Edit Task
