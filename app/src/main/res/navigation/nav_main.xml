@@ -31,7 +31,11 @@
         android:id="@+id/editTaskFragment"
         android:name="com.pab.niyyah.ui.task.EditTaskFragment"
         android:label="Edit Task"
-        tools:layout="@layout/fragment_edit_task" />
+        tools:layout="@layout/fragment_edit_task">
+        <argument
+            android:name="taskId"
+            app:argType="string" />
+    </fragment>
 
     <fragment
         android:id="@+id/profileFragment"
