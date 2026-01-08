@@ -27,6 +27,7 @@ class CreateTaskFragment : Fragment() {
     private lateinit var db: FirebaseFirestore
 
     private val calendar = Calendar.getInstance()
+    private var isLoading = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,31 +48,26 @@ class CreateTaskFragment : Fragment() {
     }
 
     private fun setupUI() {
-        // Setup Repeat Spinner
         val repeatOptions = arrayOf("Never", "Daily", "Weekly", "Monthly")
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, repeatOptions)
         binding.spinnerRepeat.adapter = adapter
     }
 
     private fun setupClickListeners() {
-        // Back button
         binding.ivBack.setOnClickListener {
-            findNavController().navigateUp()
+            if (!isLoading) findNavController().navigateUp()
         }
 
-        // Due Date picker
         binding.etDueDate.setOnClickListener {
             showDatePicker()
         }
 
-        // Time picker
         binding.etTime.setOnClickListener {
             showTimePicker()
         }
 
-        // Create button
         binding.btnCreate.setOnClickListener {
-            createTask()
+            if (!isLoading) createTask()
         }
     }
 
@@ -103,6 +99,12 @@ class CreateTaskFragment : Fragment() {
             false
         ).show()
     }
+    
+    private fun setLoading(loading: Boolean) {
+        isLoading = loading
+        binding.btnCreate.isEnabled = !loading
+        binding.btnCreate.text = if (loading) "Membuat..." else getString(R.string.create)
+    }
 
     private fun createTask() {
         val title = binding.etTitle.text.toString().trim()
@@ -112,7 +114,8 @@ class CreateTaskFragment : Fragment() {
         val repeat = binding.spinnerRepeat.selectedItem.toString()
 
         if (title.isEmpty()) {
-            Toast.makeText(context, "Judul task harus diisi!", Toast.LENGTH_SHORT).show()
+            binding.etTitle.error = "Judul task harus diisi"
+            binding.etTitle.requestFocus()
             return
         }
 
@@ -121,6 +124,8 @@ class CreateTaskFragment : Fragment() {
             Toast.makeText(context, "User tidak ditemukan!", Toast.LENGTH_SHORT).show()
             return
         }
+
+        setLoading(true)
 
         val taskData = hashMapOf(
             "title" to title,
@@ -135,11 +140,15 @@ class CreateTaskFragment : Fragment() {
 
         db.collection("tasks").add(taskData)
             .addOnSuccessListener {
+                if (_binding == null) return@addOnSuccessListener
+                setLoading(false)
                 Toast.makeText(context, "Task berhasil dibuat!", Toast.LENGTH_SHORT).show()
                 findNavController().navigateUp()
             }
-            .addOnFailureListener {
-                Toast.makeText(context, "Gagal membuat task: ${it.message}", Toast.LENGTH_SHORT).show()
+            .addOnFailureListener { e ->
+                if (_binding == null) return@addOnFailureListener
+                setLoading(false)
+                Toast.makeText(context, "Gagal membuat task: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
             }
     }
 

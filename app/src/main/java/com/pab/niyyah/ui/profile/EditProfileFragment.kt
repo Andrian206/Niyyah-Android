@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import com.pab.niyyah.databinding.FragmentEditProfileBinding
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -24,6 +25,7 @@ class EditProfileFragment : Fragment() {
     private lateinit var db: FirebaseFirestore
 
     private val calendar = Calendar.getInstance()
+    private var isSaving = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,30 +46,29 @@ class EditProfileFragment : Fragment() {
     }
 
     private fun loadUserData() {
-        val currentUser = auth.currentUser
-        if (currentUser != null) {
-            db.collection("users").document(currentUser.uid).get()
-                .addOnSuccessListener { document ->
-                    if (document != null && document.exists()) {
-                        binding.etFirstName.setText(document.getString("firstName") ?: "")
-                        binding.etLastName.setText(document.getString("lastName") ?: "")
-                        binding.etUsername.setText(document.getString("username") ?: "")
-                        binding.etGender.setText(document.getString("gender") ?: "")
-                        binding.etNationality.setText(document.getString("nationality") ?: "")
-                        binding.etBirthDate.setText(document.getString("birthDate") ?: "")
-                        binding.etPhone.setText(document.getString("phoneNumber") ?: "")
-                    }
+        val currentUser = auth.currentUser ?: return
+        
+        db.collection("users").document(currentUser.uid).get()
+            .addOnSuccessListener { document ->
+                if (_binding == null) return@addOnSuccessListener
+                
+                if (document != null && document.exists()) {
+                    binding.etFirstName.setText(document.getString("firstName") ?: "")
+                    binding.etLastName.setText(document.getString("lastName") ?: "")
+                    binding.etUsername.setText(document.getString("username") ?: "")
+                    binding.etGender.setText(document.getString("gender") ?: "")
+                    binding.etNationality.setText(document.getString("nationality") ?: "")
+                    binding.etBirthDate.setText(document.getString("birthDate") ?: "")
+                    binding.etPhone.setText(document.getString("phoneNumber") ?: "")
                 }
-        }
+            }
     }
 
     private fun setupClickListeners() {
-        // Back button
         binding.ivBack.setOnClickListener {
             findNavController().navigateUp()
         }
 
-        // Birth Date picker
         binding.etBirthDate.setOnClickListener {
             showDatePicker()
         }
@@ -76,9 +77,10 @@ class EditProfileFragment : Fragment() {
             showDatePicker()
         }
 
-        // Save button
         binding.btnSave.setOnClickListener {
-            saveProfile()
+            if (!isSaving) {
+                saveProfile()
+            }
         }
     }
 
@@ -111,6 +113,15 @@ class EditProfileFragment : Fragment() {
             return
         }
 
+        // Validasi minimal
+        if (firstName.isEmpty()) {
+            Toast.makeText(context, "Nama depan wajib diisi!", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        isSaving = true
+        binding.btnSave.isEnabled = false
+
         val userData = hashMapOf(
             "firstName" to firstName,
             "lastName" to lastName,
@@ -121,13 +132,23 @@ class EditProfileFragment : Fragment() {
             "phoneNumber" to phoneNumber
         )
 
-        db.collection("users").document(currentUser.uid).update(userData as Map<String, Any>)
+        // Gunakan set dengan merge untuk menghindari error jika document belum ada
+        db.collection("users").document(currentUser.uid)
+            .set(userData, SetOptions.merge())
             .addOnSuccessListener {
+                if (_binding == null) return@addOnSuccessListener
+                
+                isSaving = false
+                binding.btnSave.isEnabled = true
                 Toast.makeText(context, "Profil berhasil disimpan!", Toast.LENGTH_SHORT).show()
                 findNavController().navigateUp()
             }
-            .addOnFailureListener {
-                Toast.makeText(context, "Gagal menyimpan profil: ${it.message}", Toast.LENGTH_SHORT).show()
+            .addOnFailureListener { e ->
+                if (_binding == null) return@addOnFailureListener
+                
+                isSaving = false
+                binding.btnSave.isEnabled = true
+                Toast.makeText(context, "Gagal menyimpan profil: ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
 

@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
@@ -41,43 +42,58 @@ class ProfileFragment : Fragment() {
     }
 
     private fun loadUserData() {
-        val currentUser = auth.currentUser
-        if (currentUser != null) {
-            db.collection("users").document(currentUser.uid).get()
-                .addOnSuccessListener { document ->
-                    if (document != null && document.exists()) {
-                        val firstName = document.getString("firstName") ?: ""
-                        val lastName = document.getString("lastName") ?: ""
-                        val username = document.getString("username") ?: ""
+        val currentUser = auth.currentUser ?: return
+        
+        db.collection("users").document(currentUser.uid).get()
+            .addOnSuccessListener { document ->
+                if (_binding == null) return@addOnSuccessListener
+                
+                if (document != null && document.exists()) {
+                    val firstName = document.getString("firstName") ?: ""
+                    val lastName = document.getString("lastName") ?: ""
+                    val username = document.getString("username") ?: ""
 
-                        binding.tvName.text = "$firstName $lastName".trim().ifEmpty { "Name" }
-                        binding.tvUsername.text = if (username.isNotEmpty()) "@$username" else ""
-                    }
+                    val fullName = "$firstName $lastName".trim()
+                    binding.tvName.text = fullName.ifEmpty { "Name" }
+                    binding.tvUsername.text = if (username.isNotEmpty()) "@$username" else ""
                 }
-        }
+            }
+            .addOnFailureListener { e ->
+                if (_binding == null) return@addOnFailureListener
+                Toast.makeText(context, "Gagal memuat profil: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
+            }
     }
 
     private fun setupClickListeners() {
-        // Back button
         binding.ivBack.setOnClickListener {
             findNavController().navigateUp()
         }
 
-        // Edit button
         binding.btnEdit.setOnClickListener {
             findNavController().navigate(R.id.action_profileFragment_to_editProfileFragment)
         }
 
-        // Logout button
         binding.btnLogout.setOnClickListener {
-            auth.signOut()
-            Toast.makeText(context, "Berhasil logout!", Toast.LENGTH_SHORT).show()
-
-            // Pindah ke AuthActivity
-            val intent = Intent(requireActivity(), AuthActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            startActivity(intent)
+            showLogoutConfirmation()
         }
+    }
+    
+    private fun showLogoutConfirmation() {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Logout")
+            .setMessage("Apakah Anda yakin ingin keluar?")
+            .setPositiveButton("Ya") { _, _ -> performLogout() }
+            .setNegativeButton("Batal", null)
+            .show()
+    }
+    
+    private fun performLogout() {
+        auth.signOut()
+        Toast.makeText(context, "Berhasil logout!", Toast.LENGTH_SHORT).show()
+
+        val intent = Intent(requireActivity(), AuthActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
     }
 
     override fun onDestroyView() {

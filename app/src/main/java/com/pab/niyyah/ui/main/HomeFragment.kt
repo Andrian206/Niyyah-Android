@@ -6,11 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
 import com.pab.niyyah.R
 import com.pab.niyyah.data.Task
 import com.pab.niyyah.databinding.FragmentHomeBinding
@@ -24,6 +26,8 @@ class HomeFragment : Fragment() {
     private lateinit var db: FirebaseFirestore
     private lateinit var ongoingTaskAdapter: TaskAdapter
     private lateinit var completedTaskAdapter: TaskAdapter
+    
+    private var tasksListener: ListenerRegistration? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,8 +43,7 @@ class HomeFragment : Fragment() {
         auth = FirebaseAuth.getInstance()
         db = FirebaseFirestore.getInstance()
 
-        val currentUser = auth.currentUser
-        if (currentUser == null) return
+        val currentUser = auth.currentUser ?: return
 
         setupUI(currentUser.uid)
         setupClickListeners()
@@ -48,16 +51,16 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupUI(userId: String) {
-        // Set greeting dengan nama user
         db.collection("users").document(userId).get()
             .addOnSuccessListener { document ->
+                if (_binding == null) return@addOnSuccessListener
+                
                 if (document != null && document.exists()) {
                     val firstName = document.getString("firstName") ?: ""
                     binding.tvGreeting.text = getString(R.string.hello_user, firstName)
                 }
             }
 
-        // Setup Ongoing Tasks Adapter
         ongoingTaskAdapter = TaskAdapter(
             onTaskClick = { task ->
                 val bundle = bundleOf("taskId" to task.id)
@@ -68,7 +71,6 @@ class HomeFragment : Fragment() {
             }
         )
 
-        // Setup Completed Tasks Adapter
         completedTaskAdapter = TaskAdapter(
             onTaskClick = { task ->
                 val bundle = bundleOf("taskId" to task.id)
@@ -89,55 +91,46 @@ class HomeFragment : Fragment() {
             adapter = completedTaskAdapter
         }
 
-        // Set progress awal
         binding.tvProgressPercent.text = getString(R.string.progress_percent, 0)
     }
 
     private fun setupClickListeners() {
-        // FAB Add Task
         binding.fabAddTask.setOnClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_createTaskFragment)
         }
 
-        // Avatar -> Profile
         binding.ivAvatar.setOnClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_profileFragment)
         }
     }
 
     private fun loadTasksFromFirebase(userId: String) {
-        db.collection("tasks")
+        tasksListener = db.collection("tasks")
             .whereEqualTo("userId", userId)
-            .addSnapshotListener { snapshots, e ->
-                if (e != null) {
-                    Toast.makeText(context, "Gagal ambil data: ${e.message}", Toast.LENGTH_SHORT).show()
+            .addSnapshotListener { snapshots, error ->
+                if (_binding == null) return@addSnapshotListener
+                
+                if (error != null) {
+                    Toast.makeText(context, "Gagal ambil data: ${error.localizedMessage}", Toast.LENGTH_SHORT).show()
                     return@addSnapshotListener
                 }
 
-                val allTasks = ArrayList<Task>()
+                val allTasks = snapshots?.documents?.mapNotNull { document ->
+                    document.toObject(Task::class.java)?.copy(id = document.id)
+                } ?: emptyList()
 
-                for (document in snapshots!!) {
-                    val task = document.toObject(Task::class.java)
-                    val taskWithId = task.copy(id = document.id)
-                    allTasks.add(taskWithId)
-                }
-
-                // Pisahkan ongoing dan completed tasks
                 val ongoingTasks = allTasks.filter { !it.isCompleted }.sortedByDescending { it.createdAt }
                 val completedTasks = allTasks.filter { it.isCompleted }.sortedByDescending { it.createdAt }
 
-                // Update adapters
                 ongoingTaskAdapter.submitList(ongoingTasks)
                 completedTaskAdapter.submitList(completedTasks)
 
-                // Show/hide empty state
-                binding.tvNoOngoingTask.visibility = if (ongoingTasks.isEmpty()) View.VISIBLE else View.GONE
-                binding.rvOngoingTasks.visibility = if (ongoingTasks.isEmpty()) View.GONE else View.VISIBLE
+                binding.tvNoOngoingTask.isVisible = ongoingTasks.isEmpty()
+                binding.rvOngoingTasks.isVisible = ongoingTasks.isNotEmpty()
 
-                binding.tvNoCompletedTask.visibility = if (completedTasks.isEmpty()) View.VISIBLE else View.GONE
-                binding.rvCompletedTasks.visibility = if (completedTasks.isEmpty()) View.GONE else View.VISIBLE
+                binding.tvNoCompletedTask.isVisible = completedTasks.isEmpty()
+                binding.rvCompletedTasks.isVisible = completedTasks.isNotEmpty()
 
-                // Update progress
                 updateProgress(allTasks)
             }
     }
@@ -150,7 +143,7 @@ class HomeFragment : Fragment() {
                 Toast.makeText(context, "Task ditandai $status", Toast.LENGTH_SHORT).show()
             }
             .addOnFailureListener { e ->
-                Toast.makeText(context, "Gagal update: ${e.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Gagal update: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
             }
     }
 
@@ -171,6 +164,8 @@ class HomeFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        tasksListener?.remove()
+        tasksListener = null
         _binding = null
     }
 }

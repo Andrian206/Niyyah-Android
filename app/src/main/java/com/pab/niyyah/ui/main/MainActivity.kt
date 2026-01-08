@@ -1,9 +1,7 @@
 package com.pab.niyyah.ui.main
 
-import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.content.Intent
+import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -15,33 +13,49 @@ import com.pab.niyyah.ui.auth.AuthActivity
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var auth: FirebaseAuth
+    private var isCheckingAuth = true
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Install splash screen sebelum super.onCreate()
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
-        val auth = FirebaseAuth.getInstance()
-        var isReady = false
-        Handler(Looper.getMainLooper()).postDelayed({
-            val currentUser = auth.currentUser
 
-            if (currentUser == null) {
-                val intent = Intent(this, AuthActivity::class.java)
-                startActivity(intent)
+        auth = FirebaseAuth.getInstance()
 
-                finish()
-            } else {
-                 isReady = true
-            }
-           
-        }, 1000)
+        // Keep splash screen sampai auth check selesai
+        splashScreen.setKeepOnScreenCondition { isCheckingAuth }
 
-        splashScreen.setKeepOnScreenCondition { !isReady }
+        // Check authentication status
+        checkAuthAndNavigate()
 
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
+        
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+    }
+
+    private fun checkAuthAndNavigate() {
+        val currentUser = auth.currentUser
+        
+        if (currentUser == null) {
+            // User belum login, pindah ke AuthActivity
+            navigateToAuth()
+        } else {
+            // User sudah login, tampilkan HomeFragment
+            isCheckingAuth = false
+        }
+    }
+
+    private fun navigateToAuth() {
+        val intent = Intent(this, AuthActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        startActivity(intent)
+        finish()
     }
 }
