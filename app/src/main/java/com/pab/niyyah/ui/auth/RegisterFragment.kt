@@ -163,7 +163,7 @@ class RegisterFragment : Fragment() {
         isLoading = loading
         binding.btnSignUp.isEnabled = !loading
         binding.btnSignUp.text = if (loading) "Mendaftar..." else "Sign Up"
-        binding.progressBar?.isVisible = loading
+        binding.tvSignIn?.isVisible = loading
     }
 
     private fun registerUser(firstName: String, lastName: String, email: String, pass: String) {

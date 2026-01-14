@@ -24,8 +24,7 @@ class HomeFragment : Fragment() {
 
     private lateinit var auth: FirebaseAuth
     private lateinit var db: FirebaseFirestore
-    private lateinit var ongoingTaskAdapter: TaskAdapter
-    private lateinit var completedTaskAdapter: TaskAdapter
+    private lateinit var taskAdapter: TaskAdapter
     
     private var tasksListener: ListenerRegistration? = null
 
@@ -61,17 +60,7 @@ class HomeFragment : Fragment() {
                 }
             }
 
-        ongoingTaskAdapter = TaskAdapter(
-            onTaskClick = { task ->
-                val bundle = bundleOf("taskId" to task.id)
-                findNavController().navigate(R.id.action_homeFragment_to_editTaskFragment, bundle)
-            },
-            onCheckboxClick = { task ->
-                toggleTaskCompleted(task)
-            }
-        )
-
-        completedTaskAdapter = TaskAdapter(
+        taskAdapter = TaskAdapter(
             onTaskClick = { task ->
                 val bundle = bundleOf("taskId" to task.id)
                 findNavController().navigate(R.id.action_homeFragment_to_editTaskFragment, bundle)
@@ -83,12 +72,7 @@ class HomeFragment : Fragment() {
 
         binding.rvOngoingTasks.apply {
             layoutManager = LinearLayoutManager(context)
-            adapter = ongoingTaskAdapter
-        }
-
-        binding.rvCompletedTasks.apply {
-            layoutManager = LinearLayoutManager(context)
-            adapter = completedTaskAdapter
+            adapter = taskAdapter
         }
 
         binding.tvProgressPercent.text = getString(R.string.progress_percent, 0)
@@ -119,17 +103,17 @@ class HomeFragment : Fragment() {
                     document.toObject(Task::class.java)?.copy(id = document.id)
                 } ?: emptyList()
 
-                val ongoingTasks = allTasks.filter { !it.isCompleted }.sortedByDescending { it.createdAt }
-                val completedTasks = allTasks.filter { it.isCompleted }.sortedByDescending { it.createdAt }
+                // Sort: ongoing tasks first, then completed tasks, both by createdAt descending
+                val sortedTasks = allTasks.sortedWith(
+                    compareBy<Task> { it.isCompleted }.thenByDescending { it.createdAt }
+                )
 
-                ongoingTaskAdapter.submitList(ongoingTasks)
-                completedTaskAdapter.submitList(completedTasks)
+                // Submit null first to force refresh, then submit new list
+                taskAdapter.submitList(null)
+                taskAdapter.submitList(sortedTasks)
 
-                binding.tvNoOngoingTask.isVisible = ongoingTasks.isEmpty()
-                binding.rvOngoingTasks.isVisible = ongoingTasks.isNotEmpty()
-
-                binding.tvNoCompletedTask.isVisible = completedTasks.isEmpty()
-                binding.rvCompletedTasks.isVisible = completedTasks.isNotEmpty()
+                binding.tvNoOngoingTask.isVisible = allTasks.isEmpty()
+                binding.rvOngoingTasks.isVisible = allTasks.isNotEmpty()
 
                 updateProgress(allTasks)
             }
