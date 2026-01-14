@@ -87,7 +87,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/first_name"
-                    android:textColor="@color/greyMD"
+                    android:textColor="@color/purple_light"
                     android:textSize="12sp"
                     android:fontFamily="@font/inter_regular" />
 
@@ -118,7 +118,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/last_name"
-                    android:textColor="@color/greyMD"
+                    android:textColor="@color/purple_light"
                     android:textSize="12sp"
                     android:fontFamily="@font/inter_regular" />
 
@@ -147,7 +147,7 @@
             android:layout_marginTop="16dp"
             android:layout_marginStart="32dp"
             android:text="@string/email"
-            android:textColor="@color/greyMD"
+            android:textColor="@color/purple_light"
             android:textSize="12sp"
             android:fontFamily="@font/inter_regular"
             app:layout_constraintTop_toBottomOf="@id/ll_name_row"
@@ -179,7 +179,7 @@
             android:layout_marginTop="16dp"
             android:layout_marginStart="32dp"
             android:text="@string/password"
-            android:textColor="@color/greyMD"
+            android:textColor="@color/purple_light"
             android:textSize="12sp"
             android:fontFamily="@font/inter_regular"
             app:layout_constraintTop_toBottomOf="@id/et_email"
@@ -229,7 +229,7 @@
             android:layout_marginTop="16dp"
             android:layout_marginStart="32dp"
             android:text="@string/confirm_password"
-            android:textColor="@color/greyMD"
+            android:textColor="@color/purple_light"
             android:textSize="12sp"
             android:fontFamily="@font/inter_regular"
             app:layout_constraintTop_toBottomOf="@id/fl_password"
@@ -301,7 +301,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/already_have_account"
-                android:textColor="@color/greyMD"
+                android:textColor="@color/purple_light"
                 android:textSize="12sp"
                 android:fontFamily="@font/inter_regular" />
 
@@ -310,7 +310,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/sign_in"
-                android:textColor="@color/purpleD"
+                android:textColor="@color/purple_dark"
                 android:textSize="12sp"
                 android:fontFamily="@font/inter_semibold" />
 

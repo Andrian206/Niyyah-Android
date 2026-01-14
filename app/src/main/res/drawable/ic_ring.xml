@@ -6,7 +6,7 @@
     <!-- Garis pinggir ungu -->
     <stroke
         android:width="2dp"
-        android:color="@color/purpleD"/> <!-- Gunakan warna ungu utama Anda -->
+        android:color="@color/purple_dark"/> <!-- Gunakan warna ungu utama Anda -->
     <size
         android:width="12dp"
         android:height="12dp"/>

@@ -11,7 +11,7 @@
         android:id="@+id/cb_task"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:buttonTint="@color/purpleD"
+        android:buttonTint="@color/purple_dark"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
@@ -45,7 +45,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
-            android:textColor="@color/greyMD"
+            android:textColor="@color/purple_light"
             android:textSize="12sp"
             android:fontFamily="@font/inter_regular"
             android:maxLines="2"
@@ -60,7 +60,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
-            android:textColor="@color/greyMD"
+            android:textColor="@color/purple_light"
             android:textSize="11sp"
             android:fontFamily="@font/inter_regular"
             tools:text="Today, 7:00 A.M" />

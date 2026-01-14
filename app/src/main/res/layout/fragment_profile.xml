@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
             android:text="@string/profile"
-            android:textColor="@color/purpleD"
+            android:textColor="@color/purple_dark"
             android:textSize="18sp"
             android:fontFamily="@font/inter_bold" />
 
@@ -65,7 +65,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:text="@string/name"
-            android:textColor="@color/purpleD"
+            android:textColor="@color/purple_dark"
             android:textSize="20sp"
             android:fontFamily="@font/inter_bold" />
 
@@ -75,7 +75,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:textColor="@color/purpleA"
+            android:textColor="@color/purple_medium"
             android:textSize="14sp"
             android:fontFamily="@font/inter_regular"
             tools:text="@username123" />
