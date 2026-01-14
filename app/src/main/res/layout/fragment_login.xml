@@ -183,38 +183,32 @@
         <!-- Sign In Button -->
         <Button
             android:id="@+id/btn_sign_in"
+            style="@style/buttonPurle"
             android:layout_width="0dp"
             android:layout_height="56dp"
             android:layout_marginTop="24dp"
             android:layout_marginHorizontal="32dp"
             android:text="@string/sign_in"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            android:textAllCaps="true"
-            android:fontFamily="@font/inter_bold"
-            android:background="@drawable/bg_button_purple"
             app:layout_constraintTop_toBottomOf="@id/tv_forgot_password"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            style="@style/buttonPurle"/>
+            app:layout_constraintEnd_toEndOf="parent" />
 
         <!-- Google Sign In Button -->
         <Button
             android:id="@+id/btn_google_sign_in"
+            style="@style/buttonGoogle"
             android:layout_width="0dp"
             android:layout_height="56dp"
             android:layout_marginTop="16dp"
             android:layout_marginHorizontal="32dp"
             app:layout_constraintTop_toBottomOf="@id/btn_sign_in"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            style="@style/buttonGoogle"/>
+            app:layout_constraintEnd_toEndOf="parent" />
 
         <ImageView
             android:id="@+id/iv_google"
-            android:layout_width="26dp"
-            android:layout_height="26dp"
-            android:layout_marginEnd="14dp"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
             android:src="@drawable/ic_google"
             app:layout_constraintBottom_toBottomOf="@id/btn_google_sign_in"
             app:layout_constraintStart_toStartOf="@id/btn_google_sign_in"
@@ -226,12 +220,12 @@
             android:id="@+id/ll_sign_up"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="16dp"
             android:orientation="horizontal"
             app:layout_constraintTop_toBottomOf="@id/btn_google_sign_in"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent">
+            >
 
             <TextView
                 android:layout_width="wrap_content"
