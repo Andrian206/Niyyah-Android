@@ -2,12 +2,12 @@ package com.pab.niyyah.ui.auth
 
 import android.content.Intent
 import android.os.Bundle
-import android.text.method.HideReturnsTransformationMethod
-import android.text.method.PasswordTransformationMethod
+import android.text.InputType
 import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -20,10 +20,8 @@ class LoginFragment : Fragment() {
 
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
-    
     private lateinit var auth: FirebaseAuth
     private var isPasswordVisible = false
-    private var isLoading = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,119 +33,110 @@ class LoginFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         auth = FirebaseAuth.getInstance()
 
-        setupPasswordToggle()
-        setupClickListeners()
+        setupActions()
     }
-    
-    private fun setupPasswordToggle() {
-        binding.ivPasswordToggle.setOnClickListener {
-            isPasswordVisible = !isPasswordVisible
-            if (isPasswordVisible) {
-                binding.etPassword.transformationMethod = HideReturnsTransformationMethod.getInstance()
-                binding.ivPasswordToggle.setImageResource(R.drawable.ic_visibility)
-            } else {
-                binding.etPassword.transformationMethod = PasswordTransformationMethod.getInstance()
-                binding.ivPasswordToggle.setImageResource(R.drawable.ic_visibility_off)
-            }
-            binding.etPassword.setSelection(binding.etPassword.text?.length ?: 0)
-        }
-    }
-    
-    private fun setupClickListeners() {
+
+    private fun setupActions() {
+        // 1. Link ke Register (Sign Up)
         binding.tvSignUp.setOnClickListener {
-            if (!isLoading) {
-                findNavController().navigate(R.id.action_loginFragment_to_registerFragment)
+            findNavController().navigate(R.id.action_loginFragment_to_registerFragment)
+        }
+
+        // 2. Link Lupa Password
+        binding.tvForgotPassword.setOnClickListener {
+            val email = binding.etEmail.text.toString().trim()
+            if (email.isEmpty()) {
+                binding.etEmail.error = "Masukkan email dulu"
+                binding.etEmail.requestFocus()
+                return@setOnClickListener
+            }
+            sendResetPassword(email)
+        }
+
+        // 3. Toggle Visibility Password (Mata)
+        binding.ivPasswordToggle.setOnClickListener {
+            togglePasswordVisibility(binding.etPassword)
+        }
+
+        // 4. Tombol Sign In (Login Email/Pass)
+        binding.btnSignIn.setOnClickListener {
+            val email = binding.etEmail.text.toString().trim()
+            val password = binding.etPassword.text.toString().trim()
+
+            if (validateInput(email, password)) {
+                loginWithFirebase(email, password)
             }
         }
 
-        binding.btnSignIn.setOnClickListener {
-            if (!isLoading) {
-                performLogin()
-            }
+        // 5. Tombol Google Sign In
+        binding.btnGoogleSignIn.setOnClickListener {
+            Toast.makeText(context, "Fitur Google Login perlu setup SHA-1 di Firebase Console", Toast.LENGTH_LONG).show()
+            // Nanti bisa kita tambahkan logika GoogleSignInClient di sini
         }
     }
-    
-    private fun performLogin() {
-        val email = binding.etEmail.text.toString().trim()
-        val password = binding.etPassword.text.toString().trim()
 
-        // Validasi input
-        if (!validateInput(email, password)) return
+    private fun validateInput(email: String, pass: String): Boolean {
+        if (email.isEmpty()) {
+            binding.etEmail.error = "Email wajib diisi"
+            return false
+        }
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            binding.etEmail.error = "Format email salah"
+            return false
+        }
+        if (pass.isEmpty()) {
+            binding.etPassword.error = "Password wajib diisi"
+            return false
+        }
+        return true
+    }
 
-        // Set loading state
-        setLoading(true)
-
-        auth.signInWithEmailAndPassword(email, password)
+    private fun loginWithFirebase(email: String, pass: String) {
+        // Tampilkan loading jika ada progress bar (opsional)
+        auth.signInWithEmailAndPassword(email, pass)
             .addOnCompleteListener { task ->
-                if (_binding == null) return@addOnCompleteListener
-                
-                setLoading(false)
-                
                 if (task.isSuccessful) {
-                    Toast.makeText(context, "Login Berhasil!", Toast.LENGTH_SHORT).show()
-                    navigateToMain()
+                    navigateToHome()
                 } else {
-                    val errorMessage = getFirebaseErrorMessage(task.exception)
-                    Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Login Gagal: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
                 }
             }
     }
-    
-    private fun validateInput(email: String, password: String): Boolean {
-        if (email.isEmpty()) {
-            Toast.makeText(context, "Email wajib diisi!", Toast.LENGTH_SHORT).show()
-            binding.etEmail.requestFocus()
-            return false
-        }
-        
-        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            Toast.makeText(context, "Format email tidak valid!", Toast.LENGTH_SHORT).show()
-            binding.etEmail.requestFocus()
-            return false
-        }
-        
-        if (password.isEmpty()) {
-            Toast.makeText(context, "Password wajib diisi!", Toast.LENGTH_SHORT).show()
-            binding.etPassword.requestFocus()
-            return false
-        }
-        
-        if (password.length < 6) {
-            Toast.makeText(context, "Password minimal 6 karakter!", Toast.LENGTH_SHORT).show()
-            binding.etPassword.requestFocus()
-            return false
-        }
-        
-        return true
+
+    private fun sendResetPassword(email: String) {
+        auth.sendPasswordResetEmail(email)
+            .addOnSuccessListener {
+                Toast.makeText(context, "Cek email Anda untuk reset password", Toast.LENGTH_LONG).show()
+            }
+            .addOnFailureListener {
+                Toast.makeText(context, "Gagal: ${it.message}", Toast.LENGTH_SHORT).show()
+            }
     }
-    
-    private fun setLoading(loading: Boolean) {
-        isLoading = loading
-        binding.btnSignIn.isEnabled = !loading
-        binding.btnSignIn.text = if (loading) "Loading..." else getString(R.string.sign_in)
-    }
-    
-    private fun getFirebaseErrorMessage(exception: Exception?): String {
-        return when {
-            exception?.message?.contains("no user record") == true -> 
-                "Email tidak terdaftar"
-            exception?.message?.contains("password is invalid") == true -> 
-                "Password salah"
-            exception?.message?.contains("network") == true -> 
-                "Tidak ada koneksi internet"
-            else -> 
-                "Login gagal: ${exception?.message}"
+
+    private fun togglePasswordVisibility(editText: EditText) {
+        if (isPasswordVisible) {
+            // Sembunyikan Password
+            editText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+            // Ubah icon mata dicoret (sesuaikan drawable anda)
+            binding.ivPasswordToggle.setImageResource(R.drawable.ic_visibility_off)
+        } else {
+            // Tampilkan Password
+            editText.inputType = InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+            // Ubah icon mata terbuka
+            binding.ivPasswordToggle.setImageResource(R.drawable.ic_visibility) // Ganti icon yg sesuai
         }
+        // Pindahkan kursor ke akhir teks
+        editText.setSelection(editText.text.length)
+        isPasswordVisible = !isPasswordVisible
     }
-    
-    private fun navigateToMain() {
-        val intent = Intent(requireActivity(), MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        }
+
+    private fun navigateToHome() {
+        val intent = Intent(requireActivity(), MainActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
+        requireActivity().finish()
     }
 
     override fun onDestroyView() {

@@ -18,10 +18,11 @@
             android:id="@+id/iv_logo"
             android:layout_width="120dp"
             android:layout_height="120dp"
-            android:layout_marginTop="80dp"
+            android:layout_marginTop="60dp"
             android:src="@drawable/ic_niyyah_purple"
             android:contentDescription="@string/app_name"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/tv_sign_in_title"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 

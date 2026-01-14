@@ -267,7 +267,7 @@
 
         <!-- Create Button -->
         <Button
-            style="@style/buttonA"
+            style="@style/buttonPurle"
             android:id="@+id/btn_create"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

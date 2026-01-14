@@ -77,8 +77,7 @@
             android:layout_marginTop="4dp"
             android:textColor="@color/purple_medium"
             android:textSize="14sp"
-            android:fontFamily="@font/inter_regular"
-            tools:text="@username123" />
+            android:fontFamily="@font/inter_regular" />
 
         <!-- Edit Button -->
         <Button
