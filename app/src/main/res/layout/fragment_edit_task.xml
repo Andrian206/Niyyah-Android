@@ -283,14 +283,14 @@
                 android:id="@+id/btn_delete"
                 android:layout_width="56dp"
                 android:layout_height="56dp"
-                android:background="@drawable/bg_button_delete"
+                android:background="@drawable/bg_button_red"
                 android:src="@drawable/ic_delete"
                 android:scaleType="center"
                 android:contentDescription="@string/delete" />
 
             <!-- Save Button -->
             <Button
-                style="@style/buttonA"
+                style="@style/buttonRed"
                 android:id="@+id/btn_save"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

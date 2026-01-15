@@ -16,6 +16,10 @@ import com.google.firebase.firestore.ListenerRegistration
 import com.pab.niyyah.R
 import com.pab.niyyah.data.Task
 import com.pab.niyyah.databinding.FragmentHomeBinding
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 class HomeFragment : Fragment() {
 
@@ -24,9 +28,17 @@ class HomeFragment : Fragment() {
 
     private lateinit var auth: FirebaseAuth
     private lateinit var db: FirebaseFirestore
-    private lateinit var taskAdapter: TaskAdapter
+    
+    private lateinit var todayAdapter: TaskAdapter
+    private lateinit var futureAdapter: TaskAdapter
+    private lateinit var completedAdapter: TaskAdapter
     
     private var tasksListener: ListenerRegistration? = null
+    
+    // Section expand/collapse states
+    private var isTodayExpanded = true
+    private var isFutureExpanded = false
+    private var isCompletedExpanded = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -46,6 +58,7 @@ class HomeFragment : Fragment() {
 
         setupUI(currentUser.uid)
         setupClickListeners()
+        setupSectionHeaders()
         loadTasksFromFirebase(currentUser.uid)
     }
 
@@ -60,7 +73,30 @@ class HomeFragment : Fragment() {
                 }
             }
 
-        taskAdapter = TaskAdapter(
+        // Setup Today Adapter
+        todayAdapter = TaskAdapter(
+            onTaskClick = { task ->
+                val bundle = bundleOf("taskId" to task.id)
+                findNavController().navigate(R.id.action_homeFragment_to_editTaskFragment, bundle)
+            },
+            onCheckboxClick = { task ->
+                toggleTaskCompleted(task)
+            }
+        )
+        
+        // Setup Future Adapter
+        futureAdapter = TaskAdapter(
+            onTaskClick = { task ->
+                val bundle = bundleOf("taskId" to task.id)
+                findNavController().navigate(R.id.action_homeFragment_to_editTaskFragment, bundle)
+            },
+            onCheckboxClick = { task ->
+                toggleTaskCompleted(task)
+            }
+        )
+        
+        // Setup Completed Adapter
+        completedAdapter = TaskAdapter(
             onTaskClick = { task ->
                 val bundle = bundleOf("taskId" to task.id)
                 findNavController().navigate(R.id.action_homeFragment_to_editTaskFragment, bundle)
@@ -70,12 +106,62 @@ class HomeFragment : Fragment() {
             }
         )
 
-        binding.rvOngoingTasks.apply {
+        binding.rvTodayTasks.apply {
             layoutManager = LinearLayoutManager(context)
-            adapter = taskAdapter
+            adapter = todayAdapter
+        }
+        
+        binding.rvFutureTasks.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = futureAdapter
+        }
+        
+        binding.rvCompletedTasks.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = completedAdapter
         }
 
         binding.tvProgressPercent.text = getString(R.string.progress_percent, 0)
+        
+        // Set initial visibility
+        updateSectionVisibility()
+    }
+    
+    private fun setupSectionHeaders() {
+        binding.layoutTodayHeader.setOnClickListener {
+            isTodayExpanded = !isTodayExpanded
+            updateSectionVisibility()
+        }
+        
+        binding.layoutFutureHeader.setOnClickListener {
+            isFutureExpanded = !isFutureExpanded
+            updateSectionVisibility()
+        }
+        
+        binding.layoutCompletedHeader.setOnClickListener {
+            isCompletedExpanded = !isCompletedExpanded
+            updateSectionVisibility()
+        }
+    }
+    
+    private fun updateSectionVisibility() {
+        // Today section
+        binding.rvTodayTasks.isVisible = isTodayExpanded
+        binding.ivTodayDropdown.setImageResource(
+            if (isTodayExpanded) R.drawable.ic_dropdown_up else R.drawable.ic_dropdown_down
+        )
+        
+        // Future section
+        binding.rvFutureTasks.isVisible = isFutureExpanded
+        binding.ivFutureDropdown.setImageResource(
+            if (isFutureExpanded) R.drawable.ic_dropdown_up else R.drawable.ic_dropdown_down
+        )
+        
+        // Completed section
+        binding.rvCompletedTasks.isVisible = isCompletedExpanded
+        binding.ivCompletedDropdown.setImageResource(
+            if (isCompletedExpanded) R.drawable.ic_dropdown_up else R.drawable.ic_dropdown_down
+        )
     }
 
     private fun setupClickListeners() {
@@ -103,20 +189,53 @@ class HomeFragment : Fragment() {
                     document.toObject(Task::class.java)?.copy(id = document.id)
                 } ?: emptyList()
 
-                // Sort: ongoing tasks first, then completed tasks, both by createdAt descending
-                val sortedTasks = allTasks.sortedWith(
-                    compareBy<Task> { it.isCompleted }.thenByDescending { it.createdAt }
-                )
+                // Categorize tasks
+                val todayDateStr = getTodayDateString()
+                
+                val todayTasks = allTasks.filter { task ->
+                    !task.isCompleted && task.dueDate == todayDateStr
+                }.sortedByDescending { it.createdAt }
+                
+                val futureTasks = allTasks.filter { task ->
+                    !task.isCompleted && (task.dueDate.isEmpty() || isDateAfterToday(task.dueDate))
+                }.sortedByDescending { it.createdAt }
+                
+                val completedTodayTasks = allTasks.filter { task ->
+                    task.isCompleted
+                }.sortedByDescending { it.createdAt }
 
-                // Submit null first to force refresh, then submit new list
-                taskAdapter.submitList(null)
-                taskAdapter.submitList(sortedTasks)
-
-                binding.tvNoOngoingTask.isVisible = allTasks.isEmpty()
-                binding.rvOngoingTasks.isVisible = allTasks.isNotEmpty()
+                // Submit to adapters
+                todayAdapter.submitList(null)
+                todayAdapter.submitList(todayTasks)
+                
+                futureAdapter.submitList(null)
+                futureAdapter.submitList(futureTasks)
+                
+                completedAdapter.submitList(null)
+                completedAdapter.submitList(completedTodayTasks)
 
                 updateProgress(allTasks)
             }
+    }
+    
+    private fun getTodayDateString(): String {
+        val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        return dateFormat.format(Date())
+    }
+    
+    private fun isDateAfterToday(dateStr: String): Boolean {
+        return try {
+            val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            val date = dateFormat.parse(dateStr)
+            val today = Calendar.getInstance().apply {
+                set(Calendar.HOUR_OF_DAY, 23)
+                set(Calendar.MINUTE, 59)
+                set(Calendar.SECOND, 59)
+            }.time
+            date?.after(today) == true
+        } catch (e: Exception) {
+            false
+        }
     }
 
     private fun toggleTaskCompleted(task: Task) {

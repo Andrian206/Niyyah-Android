@@ -267,7 +267,7 @@
 
         <!-- Create Button -->
         <Button
-            style="@style/buttonPurle"
+            style="@style/buttonPurple"
             android:id="@+id/btn_create"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

@@ -109,7 +109,8 @@
 
     </androidx.cardview.widget.CardView>
 
-    <!-- Task List Card -->
+
+    <!-- Task List Card: 3 Sections -->
     <androidx.cardview.widget.CardView
         android:id="@+id/card_task"
         android:layout_width="match_parent"
@@ -136,34 +137,111 @@
                 android:orientation="vertical"
                 android:padding="20dp">
 
-                <!-- Ongoing Tasks Section -->
-                <TextView
-                    android:id="@+id/tv_ongoing_task"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/my_task"
-                    android:textColor="@color/purple_dark"
-                    android:textSize="16sp"
-                    android:fontFamily="@font/inter_bold" />
-
-                <TextView
-                    android:id="@+id/tv_no_ongoing_task"
+                <!-- Today Section -->
+                <LinearLayout
+                    android:id="@+id/layout_today_header"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:text="@string/no_ongoing_task"
-                    android:textColor="@color/purple_light"
-                    android:textSize="12sp"
-                    android:fontFamily="@font/inter_regular"
-                    android:visibility="gone" />
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:clickable="true"
+                    android:focusable="true">
+                    <TextView
+                        android:id="@+id/tv_today"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Today"
+                        android:textColor="@color/purple_dark"
+                        android:textSize="16sp"
+                        android:fontFamily="@font/inter_bold" />
 
+                    <ImageView
+                        android:id="@+id/iv_today_dropdown"
+                        android:layout_width="24dp"
+                        android:layout_height="match_parent"
+                        android:contentDescription="Dropdown"
+                        android:src="@drawable/ic_dropdown_up" />
+                </LinearLayout>
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rv_ongoing_tasks"
+                    android:id="@+id/rv_today_tasks"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
+                    android:layout_marginTop="8dp"
                     android:nestedScrollingEnabled="false"
                     android:clipToPadding="false"
+                    tools:listitem="@layout/item_task" />
+
+                <!-- Future Section -->
+                <LinearLayout
+                    android:id="@+id/layout_future_header"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="16dp"
+                    android:clickable="true"
+                    android:focusable="true">
+                    <TextView
+                        android:id="@+id/tv_future"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Future"
+                        android:textColor="@color/purple_dark"
+                        android:textSize="16sp"
+                        android:fontFamily="@font/inter_bold" />
+                    <ImageView
+                        android:id="@+id/iv_future_dropdown"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_dropdown_down"
+                        android:contentDescription="Dropdown" />
+                </LinearLayout>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_future_tasks"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:nestedScrollingEnabled="false"
+                    android:clipToPadding="false"
+                    android:visibility="gone"
+                    tools:listitem="@layout/item_task" />
+
+                <!-- Completed Today Section -->
+                <LinearLayout
+                    android:id="@+id/layout_completed_header"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="16dp"
+                    android:clickable="true"
+                    android:focusable="true">
+                    <TextView
+                        android:id="@+id/tv_completed"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Completed Today"
+                        android:textColor="@color/purple_dark"
+                        android:textSize="16sp"
+                        android:fontFamily="@font/inter_bold" />
+                    <ImageView
+                        android:id="@+id/iv_completed_dropdown"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_dropdown_down"
+                        android:contentDescription="Dropdown" />
+                </LinearLayout>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_completed_tasks"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:nestedScrollingEnabled="false"
+                    android:clipToPadding="false"
+                    android:visibility="gone"
                     tools:listitem="@layout/item_task" />
 
             </LinearLayout>
