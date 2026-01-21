@@ -19,6 +19,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.pab.niyyah.R // Pastikan import R ini sesuai package anda
 import com.pab.niyyah.databinding.FragmentEditProfileBinding
+import com.pab.niyyah.utils.ImageUtils
 import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -81,18 +82,9 @@ class EditProfileFragment : Fragment() {
                     binding.etBirthDate.setText(document.getString("birthDate") ?: "")
                     binding.etPhone.setText(document.getString("phoneNumber") ?: "")
 
-                    // --- LOAD GAMBAR BASE64 ---
+                    // --- LOAD GAMBAR BASE64 dengan ImageUtils ---
                     val photoString = document.getString("photoUrl")
-                    if (!photoString.isNullOrEmpty()) {
-                        try {
-                            // Decode string panjang menjadi gambar
-                            val decodedBytes = Base64.decode(photoString, Base64.DEFAULT)
-                            val bitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
-                            binding.ivAvatar.setImageBitmap(bitmap)
-                        } catch (e: Exception) {
-                            binding.ivAvatar.setImageResource(R.drawable.ic_avatar_placeholder)
-                        }
-                    }
+                    ImageUtils.loadBase64Image(binding.ivAvatar, photoString)
                 }
             }
     }

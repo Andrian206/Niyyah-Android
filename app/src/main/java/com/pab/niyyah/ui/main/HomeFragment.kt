@@ -18,6 +18,7 @@ import com.google.firebase.firestore.ListenerRegistration
 import com.pab.niyyah.R
 import com.pab.niyyah.data.Task
 import com.pab.niyyah.databinding.FragmentHomeBinding
+import com.pab.niyyah.utils.ImageUtils
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -66,12 +67,16 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupUI(userId: String) {
-        // Ambil nama user untuk header
+        // Ambil nama user dan foto profil untuk header
         db.collection("users").document(userId).get()
             .addOnSuccessListener { document ->
                 if (_binding != null && document.exists()) {
                     val firstName = document.getString("firstName") ?: ""
                     binding.tvGreeting.text = "Hello, $firstName!"
+
+                    // Load foto profil Base64
+                    val photoString = document.getString("photoUrl")
+                    ImageUtils.loadBase64Image(binding.ivAvatar, photoString)
                 }
             }
 
