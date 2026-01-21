@@ -225,7 +225,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="@string/completed_today"
+                        android:text="@string/completed_task"
                         android:textColor="@color/purple_dark"
                         android:textSize="16sp"
                         android:fontFamily="@font/inter_bold" />

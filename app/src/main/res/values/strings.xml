@@ -57,7 +57,6 @@
     <string name="name">"Name"</string>
     <string name="username_format">"@%1$s"</string>
     <string name="dropdown">Dropdown</string>
-    <string name="completed_today">Completed Today</string>
     <string name="_0">0%</string>
     <string name="future">Future</string>
 </resources>

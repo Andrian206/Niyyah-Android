@@ -242,16 +242,30 @@ class HomeFragment : Fragment() {
             }
     }
 
-    private fun updateProgress(tasks: List<Task>) {
-        if (tasks.isEmpty()) {
+    private fun updateProgress(allTasks: List<Task>) {
+        val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.US)
+        val todayDateStr = dateFormat.format(Date())
+
+        val todayTasks = allTasks.filter { task ->
+            task.dueDate == todayDateStr
+        }
+
+        // 3. Cek jika tidak ada tugas hari ini, set 0%
+        if (todayTasks.isEmpty()) {
             binding.progressBar.progress = 0
             binding.tvProgressPercent.text = "0%"
             return
         }
-        val completed = tasks.count { it.isCompleted }
-        val percentage = (completed.toFloat() / tasks.size * 100).toInt()
 
-        binding.progressBar.setProgress(percentage, true) // Animasi API 24+
+        // 4. Hitung yang selesai HANYA dari list 'todayTasks'
+        val completed = todayTasks.count { it.isCompleted }
+        val totalToday = todayTasks.size
+
+        // 5. Rumus Persentase
+        val percentage = (completed.toFloat() / totalToday * 100).toInt()
+
+        // 6. Update UI
+        binding.progressBar.setProgress(percentage, true)
         binding.tvProgressPercent.text = "$percentage%"
     }
 
