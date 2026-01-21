@@ -37,10 +37,11 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
             android:text="@string/hello"
-            android:textColor="@color/black"
+            android:textColor="@color/purple_dark"
             android:textSize="18sp"
-            android:fontFamily="@font/inter_bold"
+            android:fontFamily="@font/inter_semibold"
             app:layout_constraintTop_toTopOf="@id/iv_avatar"
+            app:layout_constraintBottom_toBottomOf="@id/iv_avatar"
             app:layout_constraintStart_toEndOf="@id/iv_avatar"
             app:layout_constraintEnd_toStartOf="@id/iv_logo" />
 
