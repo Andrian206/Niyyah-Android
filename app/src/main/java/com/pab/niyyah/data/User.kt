@@ -5,15 +5,15 @@ package com.pab.niyyah.data
  * Document ID dari Firestore digunakan sebagai unique identifier
  */
 data class User(
-    val firstName: String = "",
-    val lastName: String = "",
-    val email: String = "",
-    val username: String = "",
-    val gender: String = "",
-    val nationality: String = "",
-    val birthDate: String = "",
-    val phoneNumber: String = "",
-    val photoUrl: String = ""
+    var firstName: String = "",
+    var lastName: String = "",
+    var email: String = "",
+    var username: String = "",
+    var gender: String = "",
+    var nationality: String = "",
+    var birthDate: String = "",
+    var phoneNumber: String = "",
+    var photoUrl: String = ""
 ) {
     /**
      * Helper untuk mendapatkan full name
