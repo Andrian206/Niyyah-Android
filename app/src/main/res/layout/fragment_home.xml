@@ -98,7 +98,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="0%"
+                    android:text="@string/_0"
                     android:textColor="@color/purple_dark"
                     android:textSize="20sp"
                     android:fontFamily="@font/inter_bold" />
@@ -146,12 +146,13 @@
                     android:gravity="center_vertical"
                     android:clickable="true"
                     android:focusable="true">
+
                     <TextView
                         android:id="@+id/tv_today"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Today"
+                        android:text="@string/today"
                         android:textColor="@color/purple_dark"
                         android:textSize="16sp"
                         android:fontFamily="@font/inter_bold" />
@@ -160,7 +161,7 @@
                         android:id="@+id/iv_today_dropdown"
                         android:layout_width="24dp"
                         android:layout_height="match_parent"
-                        android:contentDescription="Dropdown"
+                        android:contentDescription="@string/dropdown"
                         android:src="@drawable/ic_dropdown_up" />
                 </LinearLayout>
                 <androidx.recyclerview.widget.RecyclerView
@@ -187,7 +188,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Future"
+                        android:text="@string/future"
                         android:textColor="@color/purple_dark"
                         android:textSize="16sp"
                         android:fontFamily="@font/inter_bold" />
@@ -195,8 +196,8 @@
                         android:id="@+id/iv_future_dropdown"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:src="@drawable/ic_dropdown_down"
-                        android:contentDescription="Dropdown" />
+                        android:src="@drawable/ic_dropdown_up"
+                        android:contentDescription="@string/dropdown" />
                 </LinearLayout>
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_future_tasks"
@@ -223,7 +224,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Completed Today"
+                        android:text="@string/completed_today"
                         android:textColor="@color/purple_dark"
                         android:textSize="16sp"
                         android:fontFamily="@font/inter_bold" />
@@ -231,8 +232,8 @@
                         android:id="@+id/iv_completed_dropdown"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:src="@drawable/ic_dropdown_down"
-                        android:contentDescription="Dropdown" />
+                        android:src="@drawable/ic_dropdown_up"
+                        android:contentDescription="@string/dropdown" />
                 </LinearLayout>
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_completed_tasks"

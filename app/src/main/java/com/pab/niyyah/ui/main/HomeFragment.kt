@@ -1,6 +1,8 @@
 package com.pab.niyyah.ui.main
 
 import android.os.Bundle
+import android.transition.AutoTransition
+import android.transition.TransitionManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,14 +30,14 @@ class HomeFragment : Fragment() {
 
     private lateinit var auth: FirebaseAuth
     private lateinit var db: FirebaseFirestore
-    
+
     private lateinit var todayAdapter: TaskAdapter
     private lateinit var futureAdapter: TaskAdapter
     private lateinit var completedAdapter: TaskAdapter
-    
+
     private var tasksListener: ListenerRegistration? = null
-    
-    // Section expand/collapse states
+
+    // Default State: Today terbuka, sisanya tertutup
     private var isTodayExpanded = true
     private var isFutureExpanded = false
     private var isCompletedExpanded = false
@@ -54,7 +56,8 @@ class HomeFragment : Fragment() {
         auth = FirebaseAuth.getInstance()
         db = FirebaseFirestore.getInstance()
 
-        val currentUser = auth.currentUser ?: return
+        val currentUser = auth.currentUser
+        if (currentUser == null) return
 
         setupUI(currentUser.uid)
         setupClickListeners()
@@ -63,112 +66,87 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupUI(userId: String) {
+        // Ambil nama user untuk header
         db.collection("users").document(userId).get()
             .addOnSuccessListener { document ->
-                if (_binding == null) return@addOnSuccessListener
-                
-                if (document != null && document.exists()) {
+                if (_binding != null && document.exists()) {
                     val firstName = document.getString("firstName") ?: ""
-                    binding.tvGreeting.text = getString(R.string.hello_user, firstName)
+                    binding.tvGreeting.text = "Hello, $firstName!"
                 }
             }
 
-        // Setup Today Adapter
-        todayAdapter = TaskAdapter(
-            onTaskClick = { task ->
-                val bundle = bundleOf("taskId" to task.id)
-                findNavController().navigate(R.id.action_homeFragment_to_editTaskFragment, bundle)
-            },
-            onCheckboxClick = { task ->
-                toggleTaskCompleted(task)
-            }
-        )
-        
-        // Setup Future Adapter
-        futureAdapter = TaskAdapter(
-            onTaskClick = { task ->
-                val bundle = bundleOf("taskId" to task.id)
-                findNavController().navigate(R.id.action_homeFragment_to_editTaskFragment, bundle)
-            },
-            onCheckboxClick = { task ->
-                toggleTaskCompleted(task)
-            }
-        )
-        
-        // Setup Completed Adapter
-        completedAdapter = TaskAdapter(
-            onTaskClick = { task ->
-                val bundle = bundleOf("taskId" to task.id)
-                findNavController().navigate(R.id.action_homeFragment_to_editTaskFragment, bundle)
-            },
-            onCheckboxClick = { task ->
-                toggleTaskCompleted(task)
-            }
-        )
+        // Listener umum untuk klik task dan checkbox
+        val onTaskClicked = { task: Task ->
+            val bundle = bundleOf("taskId" to task.id)
+            findNavController().navigate(R.id.action_homeFragment_to_editTaskFragment, bundle)
+        }
+
+        val onCheckboxClicked = { task: Task ->
+            toggleTaskCompleted(task)
+        }
+
+        // Inisialisasi Adapter
+        todayAdapter = TaskAdapter(onTaskClicked, onCheckboxClicked)
+        futureAdapter = TaskAdapter(onTaskClicked, onCheckboxClicked)
+        completedAdapter = TaskAdapter(onTaskClicked, onCheckboxClicked)
 
         binding.rvTodayTasks.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = todayAdapter
         }
-        
         binding.rvFutureTasks.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = futureAdapter
         }
-        
         binding.rvCompletedTasks.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = completedAdapter
         }
 
-        binding.tvProgressPercent.text = getString(R.string.progress_percent, 0)
-        
-        // Set initial visibility
-        updateSectionVisibility()
+        // Set visibilitas awal sesuai state
+        refreshSectionVisibility(animate = false)
     }
-    
+
     private fun setupSectionHeaders() {
         binding.layoutTodayHeader.setOnClickListener {
             isTodayExpanded = !isTodayExpanded
-            updateSectionVisibility()
+            refreshSectionVisibility(animate = true)
         }
-        
         binding.layoutFutureHeader.setOnClickListener {
             isFutureExpanded = !isFutureExpanded
-            updateSectionVisibility()
+            refreshSectionVisibility(animate = true)
         }
-        
         binding.layoutCompletedHeader.setOnClickListener {
             isCompletedExpanded = !isCompletedExpanded
-            updateSectionVisibility()
+            refreshSectionVisibility(animate = true)
         }
     }
-    
-    private fun updateSectionVisibility() {
-        // Today section
+
+    private fun refreshSectionVisibility(animate: Boolean) {
+        if (_binding == null) return
+
+        if (animate) {
+            // Efek animasi slide halus
+            TransitionManager.beginDelayedTransition(binding.cardTask, AutoTransition())
+        }
+
+        // Update Today
         binding.rvTodayTasks.isVisible = isTodayExpanded
-        binding.ivTodayDropdown.setImageResource(
-            if (isTodayExpanded) R.drawable.ic_dropdown_up else R.drawable.ic_dropdown_down
-        )
-        
-        // Future section
+        binding.ivTodayDropdown.rotation = if (isTodayExpanded) 0f else 180f
+
+        // Update Future
         binding.rvFutureTasks.isVisible = isFutureExpanded
-        binding.ivFutureDropdown.setImageResource(
-            if (isFutureExpanded) R.drawable.ic_dropdown_up else R.drawable.ic_dropdown_down
-        )
-        
-        // Completed section
+        binding.ivFutureDropdown.rotation = if (isFutureExpanded) 0f else 180f
+
+        // Update Completed
         binding.rvCompletedTasks.isVisible = isCompletedExpanded
-        binding.ivCompletedDropdown.setImageResource(
-            if (isCompletedExpanded) R.drawable.ic_dropdown_up else R.drawable.ic_dropdown_down
-        )
+        binding.ivCompletedDropdown.rotation = if (isCompletedExpanded) 0f else 180f
     }
 
     private fun setupClickListeners() {
         binding.fabAddTask.setOnClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_createTaskFragment)
         }
-
         binding.ivAvatar.setOnClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_profileFragment)
         }
@@ -179,9 +157,9 @@ class HomeFragment : Fragment() {
             .whereEqualTo("userId", userId)
             .addSnapshotListener { snapshots, error ->
                 if (_binding == null) return@addSnapshotListener
-                
+
                 if (error != null) {
-                    Toast.makeText(context, "Gagal ambil data: ${error.localizedMessage}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Gagal sinkronisasi data", Toast.LENGTH_SHORT).show()
                     return@addSnapshotListener
                 }
 
@@ -189,86 +167,97 @@ class HomeFragment : Fragment() {
                     document.toObject(Task::class.java)?.copy(id = document.id)
                 } ?: emptyList()
 
-                // Categorize tasks
-                val todayDateStr = getTodayDateString()
-                
+                // Format tanggal hari ini (Pastikan Locale.US agar cocok dengan database)
+                val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.US)
+                val todayDateStr = dateFormat.format(Date())
+
+                // --- FILTERING LOGIC (PERBAIKAN DISINI) ---
+
+                // 1. TODAY: Hanya yang BELUM SELESAI (!isCompleted) DAN Tanggalnya HARI INI
                 val todayTasks = allTasks.filter { task ->
                     !task.isCompleted && task.dueDate == todayDateStr
-                }.sortedByDescending { it.createdAt }
-                
+                }.sortedBy { it.time }
+
+                // 2. FUTURE: Hanya yang BELUM SELESAI (!isCompleted) DAN (Tanggalnya nanti ATAU kosong) DAN (Bukan hari ini)
                 val futureTasks = allTasks.filter { task ->
-                    !task.isCompleted && (task.dueDate.isEmpty() || isDateAfterToday(task.dueDate))
-                }.sortedByDescending { it.createdAt }
-                
-                val completedTodayTasks = allTasks.filter { task ->
+                    !task.isCompleted && (task.dueDate.isEmpty() || isDateAfterToday(task.dueDate)) && task.dueDate != todayDateStr
+                }.sortedBy { it.dueDate }
+
+                // 3. COMPLETED: Hanya yang SUDAH SELESAI (isCompleted == true)
+                // Logic ini akan menangkap task "h" yang baru saja dicentang
+                val completedTasks = allTasks.filter { task ->
                     task.isCompleted
-                }.sortedByDescending { it.createdAt }
+                }.sortedByDescending { it.createdAt } // Urutkan dari yang baru selesai
 
-                // Submit to adapters
-                todayAdapter.submitList(null)
+                // --- UPDATE ADAPTER ---
+                // Submit data baru ke List UI
                 todayAdapter.submitList(todayTasks)
-                
-                futureAdapter.submitList(null)
                 futureAdapter.submitList(futureTasks)
-                
-                completedAdapter.submitList(null)
-                completedAdapter.submitList(completedTodayTasks)
+                completedAdapter.submitList(completedTasks)
 
+                // Update Progress Bar %
                 updateProgress(allTasks)
+
+                // Opsional: Jika ada task selesai baru, otomatis buka dropdown completed biar user sadar tasknya pindah
+                if (completedTasks.isNotEmpty() && !isCompletedExpanded) {
+                    isCompletedExpanded = true
+                    refreshSectionVisibility(true)
+                }
             }
     }
-    
+
+    // --- Helper Logic Tanggal ---
+
+    // PENTING: Gunakan Locale.US agar format tanggal konsisten di semua HP (tidak berubah jadi huruf Arab/Cina dll)
     private fun getTodayDateString(): String {
-        val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.US)
         return dateFormat.format(Date())
     }
-    
+
     private fun isDateAfterToday(dateStr: String): Boolean {
         return try {
-            val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-            val date = dateFormat.parse(dateStr)
-            val today = Calendar.getInstance().apply {
-                set(Calendar.HOUR_OF_DAY, 23)
-                set(Calendar.MINUTE, 59)
-                set(Calendar.SECOND, 59)
-            }.time
-            date?.after(today) == true
+            val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.US)
+            val taskDate = dateFormat.parse(dateStr)
+            val today = Date()
+
+            // Logika sederhana membandingkan tanggal
+            taskDate != null && taskDate.after(today)
         } catch (e: Exception) {
-            false
+            false // Jika format salah, anggap bukan future
         }
     }
 
     private fun toggleTaskCompleted(task: Task) {
+        val newStatus = !task.isCompleted
+
+        // Optimis UI update: update dulu di adapter sebelum firebase selesai (optional)
+        // Tapi Firestore listener cukup cepat, jadi kita andalkan listener saja.
+
         db.collection("tasks").document(task.id)
-            .update("isCompleted", !task.isCompleted)
+            .update("isCompleted", newStatus)
             .addOnSuccessListener {
-                val status = if (!task.isCompleted) "selesai" else "belum selesai"
-                Toast.makeText(context, "Task ditandai $status", Toast.LENGTH_SHORT).show()
             }
-            .addOnFailureListener { e ->
-                Toast.makeText(context, "Gagal update: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
+            .addOnFailureListener {
+                Toast.makeText(context, "Gagal update status", Toast.LENGTH_SHORT).show()
             }
     }
 
     private fun updateProgress(tasks: List<Task>) {
         if (tasks.isEmpty()) {
             binding.progressBar.progress = 0
-            binding.tvProgressPercent.text = getString(R.string.progress_percent, 0)
+            binding.tvProgressPercent.text = "0%"
             return
         }
-
-        val total = tasks.size
         val completed = tasks.count { it.isCompleted }
-        val percentage = (completed.toFloat() / total.toFloat() * 100).toInt()
+        val percentage = (completed.toFloat() / tasks.size * 100).toInt()
 
-        binding.progressBar.progress = percentage
-        binding.tvProgressPercent.text = getString(R.string.progress_percent, percentage)
+        binding.progressBar.setProgress(percentage, true) // Animasi API 24+
+        binding.tvProgressPercent.text = "$percentage%"
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         tasksListener?.remove()
-        tasksListener = null
         _binding = null
     }
 }

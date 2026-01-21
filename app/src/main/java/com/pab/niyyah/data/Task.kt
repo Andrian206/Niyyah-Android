@@ -1,13 +1,17 @@
 package com.pab.niyyah.data
+import com.google.firebase.firestore.PropertyName
 
 data class Task(
-    val id: String = "",
-    val userId: String = "",
-    val title: String = "",
-    val details: String = "",
-    val dueDate: String = "",
-    val time: String = "",
-    val repeat: String = "Never",
-    val isCompleted: Boolean = false,
-    val createdAt: Long = 0
+    var id: String = "",
+    var userId: String = "",
+    var title: String = "",
+    var details: String = "",
+    var dueDate: String = "",
+    var time: String = "",
+    var repeat: String = "Never",
+
+    @get:PropertyName("isCompleted")
+    @set:PropertyName("isCompleted")
+    var isCompleted: Boolean = false,
+    var createdAt: Long = 0
 )

@@ -1,11 +1,14 @@
 package com.pab.niyyah.ui.main
 
+import android.graphics.Paint
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.pab.niyyah.R
 import com.pab.niyyah.data.Task
 import com.pab.niyyah.databinding.ItemTaskBinding
 
@@ -19,21 +22,40 @@ class TaskAdapter(
         private val onTaskClick: (Task) -> Unit,
         private val onCheckboxClick: (Task) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
-        
+
         fun bind(task: Task) {
             binding.tvTaskTitle.text = task.title
-            binding.tvTaskTime.text = "${task.dueDate}, ${task.time}"
-            
-            binding.tvTaskDescription.isVisible = task.details.isNotEmpty()
-            binding.tvTaskDescription.text = task.details
 
-            // Set checkbox state without triggering listener
+            // Logika Teks Waktu
+            if (task.time.isNotEmpty()) {
+                binding.tvTaskTime.text = if(task.dueDate.isNotEmpty()) "${task.dueDate}, ${task.time}" else task.time
+            } else {
+                binding.tvTaskTime.text = task.dueDate
+            }
+
+            // Hindari bug checkbox trigger listener saat scroll
             binding.cbTask.setOnCheckedChangeListener(null)
             binding.cbTask.isChecked = task.isCompleted
-            binding.cbTask.setOnCheckedChangeListener { _, _ ->
+
+            // --- VISUAL SELESAI (CORET TEKS) ---
+            if (task.isCompleted) {
+                // Coret Teks
+                binding.tvTaskTitle.paintFlags = binding.tvTaskTitle.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+                // Warna Abu
+                binding.tvTaskTitle.setTextColor(ContextCompat.getColor(binding.root.context, android.R.color.darker_gray))
+            } else {
+                // Hapus Coretan
+                binding.tvTaskTitle.paintFlags = binding.tvTaskTitle.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
+                // Warna Hitam/Normal
+                binding.tvTaskTitle.setTextColor(ContextCompat.getColor(binding.root.context, R.color.black))
+            }
+
+            // Listener Checkbox
+            binding.cbTask.setOnClickListener {
                 onCheckboxClick(task)
             }
 
+            // Listener Klik Body (Edit)
             binding.root.setOnClickListener { onTaskClick(task) }
         }
     }
@@ -46,19 +68,9 @@ class TaskAdapter(
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
-    
-    private class TaskDiffCallback : DiffUtil.ItemCallback<Task>() {
-        override fun areItemsTheSame(oldItem: Task, newItem: Task): Boolean {
-            return oldItem.id == newItem.id
-        }
 
-        override fun areContentsTheSame(oldItem: Task, newItem: Task): Boolean {
-            return oldItem == newItem
-        }
-        
-        override fun getChangePayload(oldItem: Task, newItem: Task): Any? {
-            // Return non-null to trigger partial rebind
-            return if (oldItem.isCompleted != newItem.isCompleted) true else null
-        }
+    private class TaskDiffCallback : DiffUtil.ItemCallback<Task>() {
+        override fun areItemsTheSame(oldItem: Task, newItem: Task): Boolean = oldItem.id == newItem.id
+        override fun areContentsTheSame(oldItem: Task, newItem: Task): Boolean = oldItem == newItem
     }
 }

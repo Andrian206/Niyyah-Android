@@ -71,12 +71,14 @@ class CreateTaskFragment : Fragment() {
         }
     }
 
+    // Di dalam CreateTaskFragment.kt
+
     private fun showDatePicker() {
         DatePickerDialog(
             requireContext(),
             { _, year, month, dayOfMonth ->
                 calendar.set(year, month, dayOfMonth)
-                val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.US)
                 binding.etDueDate.setText(dateFormat.format(calendar.time))
             },
             calendar.get(Calendar.YEAR),
@@ -84,6 +86,8 @@ class CreateTaskFragment : Fragment() {
             calendar.get(Calendar.DAY_OF_MONTH)
         ).show()
     }
+
+// Lakukan hal yang sama untuk EditTaskFragment.kt juga!
 
     private fun showTimePicker() {
         TimePickerDialog(
