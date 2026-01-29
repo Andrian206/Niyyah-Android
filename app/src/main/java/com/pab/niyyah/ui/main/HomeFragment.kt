@@ -132,7 +132,7 @@ class HomeFragment : Fragment() {
 
         if (animate) {
             // Efek animasi slide halus
-            TransitionManager.beginDelayedTransition(binding.cardTask, AutoTransition())
+            TransitionManager.beginDelayedTransition(binding.layoutTasksContainer, AutoTransition())
         }
 
         // Update Today
