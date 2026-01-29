@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:paddingVertical="12dp"
+    android:paddingHorizontal="4dp"
+    android:background="?attr/selectableItemBackground"> <!-- Efek klik -->
+
+    <!-- Judul -->
+    <TextView
+        android:id="@+id/tv_header_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Today"
+        android:textColor="@color/purple_dark"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <!-- Jumlah Task (Opsional) -->
+    <TextView
+        android:id="@+id/tv_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="(3)"
+        android:textColor="@color/black"
+        android:textSize="12sp"
+        android:layout_marginEnd="8dp"/>
+
+    <!-- Panah Dropdown -->
+    <ImageView
+        android:id="@+id/iv_arrow"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/ic_dropdown_down"
+        android:contentDescription="Dropdown" />
+    <!-- Pastikan punya ic_dropdown_down (panah ke bawah) -->
+
+</LinearLayout>

@@ -59,4 +59,5 @@
     <string name="dropdown">Dropdown</string>
     <string name="_0">0%</string>
     <string name="future">Future</string>
+    <string name="date">date</string>
 </resources>
