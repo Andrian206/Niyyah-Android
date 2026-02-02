@@ -2,14 +2,11 @@ package com.pab.niyyah.ui.main
 
 import android.graphics.BitmapFactory
 import android.os.Bundle
-import android.transition.AutoTransition
-import android.transition.TransitionManager
 import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
-import androidx.core.view.isVisible
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController

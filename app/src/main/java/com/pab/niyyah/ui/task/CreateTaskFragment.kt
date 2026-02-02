@@ -13,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.pab.niyyah.R
+import com.pab.niyyah.utils.AlarmScheduler
 import com.pab.niyyah.databinding.FragmentCreateTaskBinding
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -154,6 +155,8 @@ class CreateTaskFragment : Fragment() {
                 setLoading(false)
                 Toast.makeText(context, "Gagal membuat task: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
             }
+
+        AlarmScheduler.scheduleAlarm(requireContext(), title, details, dueDate, time)
     }
 
     override fun onDestroyView() {

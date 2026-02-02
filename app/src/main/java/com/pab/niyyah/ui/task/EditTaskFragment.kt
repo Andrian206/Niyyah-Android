@@ -13,7 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.pab.niyyah.R
+import com.pab.niyyah.utils.AlarmScheduler
 import com.pab.niyyah.databinding.FragmentEditTaskBinding
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -193,6 +193,7 @@ class EditTaskFragment : Fragment() {
                 setLoading(false)
                 Toast.makeText(context, "Gagal update task: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
             }
+        AlarmScheduler.scheduleAlarm(requireContext(), title, details, dueDate, time)
     }
 
     private fun deleteTask() {
