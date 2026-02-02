@@ -13,3 +13,14 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Sensitive files - JANGAN COMMIT!
+app/google-services.json
+google-services.json
+*.keystore
+*.jks
+signing.properties
+keystore.properties
+
+# IDE
+.idea/
