@@ -1098,9 +1098,13 @@ service cloud.firestore {
 
 3. Sync Gradle
 
-4. Firebase Setup:
-   - Pastikan `google-services.json` ada di folder `app/`
-   - Atau buat project Firebase baru dan download config
+4. **Firebase Setup** (PENTING):
+   - Buat project Firebase baru di [Firebase Console](https://console.firebase.google.com)
+   - Aktifkan Authentication (Email/Password & Google Sign-In)
+   - Aktifkan Cloud Firestore
+   - Download `google-services.json` dari Firebase Console
+   - Copy file ke folder `app/` (file ini TIDAK disertakan di repo untuk keamanan)
+   - Gunakan `app/google-services.json.example` sebagai referensi struktur
 
 5. Run aplikasi
    - Pilih device/emulator
